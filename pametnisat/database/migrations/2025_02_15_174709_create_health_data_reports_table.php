@@ -11,15 +11,26 @@ return new class extends Migration
      *
      * @return void
      */
-   public function up()
-{
-    Schema::create('health_data_report', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('report_id')->constrained('report')->onDelete('cascade');
-        $table->foreignId('health_data_id')->constrained('health_data')->onDelete('cascade');
-        $table->timestamps();
-    });
-}
+    public function up()
+    {
+        Schema::create('health_data_reports', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('health_data_id')->constrained('health_data')->onDelete('cascade');
+            $table->text('summary')->nullable();
+            $table->enum('risk_level', ['low', 'medium', 'high'])->default('low');
+            $table->integer('average_heart_rate')->nullable();
+            $table->integer('max_heart_rate')->nullable();
+            $table->integer('min_heart_rate')->nullable();
+            $table->string('average_bp')->nullable();
+            $table->string('spo2_trend')->nullable();
+            $table->integer('steps_total')->nullable();
+            $table->float('calories_burned_total')->nullable();
+            $table->integer('sleep_quality_avg')->nullable();
+            $table->integer('stress_level_avg')->nullable();
+            $table->timestamps();
+        });
+    }
+    
 
 
     /**

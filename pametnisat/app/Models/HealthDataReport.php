@@ -10,7 +10,22 @@ class HealthDataReport extends Model
 
     protected $table = 'health_data_report'; // Eksplicitno definišemo ime tabele
 
-    protected $fillable = ['report_id', 'health_data_id'];
+    protected $fillable = [
+        'report_id',
+        'health_data_id',
+        'summary',
+        'risk_level',
+        'average_heart_rate',
+        'max_heart_rate',
+        'min_heart_rate',
+        'average_bp',
+        'spo2_trend',
+        'steps_total',
+        'calories_burned_total',
+        'sleep_quality_avg',
+        'stress_level_avg'
+    ];
+    
 
     public function report()
     {
