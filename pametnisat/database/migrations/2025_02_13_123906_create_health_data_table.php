@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+
 return new class extends Migration
 {
     /**
@@ -12,29 +13,21 @@ return new class extends Migration
      * @return void
      */
     public function up()
-{
-    Schema::create('health_data', function (Blueprint $table) {
-        // Kreiranje kolona, bez auto-increment za 'id'
-        $table->unsignedBigInteger('id'); // ID bez auto-increment
-        $table->foreignId('device_id')->constrained('device')->onDelete('cascade'); // Strani ključ za device_id
-
-        // Složeni primarni ključ
-        $table->primary(['id', 'device_id']); 
-
-        // Definisanje kolona
-        $table->time('time');
-        $table->date('date');
-        $table->float('value');
-        $table->string('unit');
-        
-        // Strani ključ za category_id koristeći foreignId
-        $table->foreignId('category_id')->constrained('category')->onDelete('cascade'); // Strani ključ za category_id
-
-        $table->timestamps();
-    });
-}
-
-
+    {
+        Schema::create('health_data', function (Blueprint $table) {
+            $table->id(); // Primarni ključ
+            $table->timestamp('timestamp'); // Vreme merenja
+            $table->integer('heart_rate'); // BPM
+            $table->integer('systolic_bp');
+            $table->integer('diastolic_bp');
+            $table->integer('spo2');
+            $table->integer('steps');
+            $table->float('calories_burned');
+            $table->integer('sleep_quality');
+            $table->integer('stress_level');
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.

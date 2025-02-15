@@ -11,23 +11,16 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+   public function up()
 {
-    Schema::create('report', function (Blueprint $table) {
-        $table->id(); 
-        
-        $table->date('creationDate');
-        $table->time('creationTime');
-        $table->string('category'); //dnevni mesecni itd
-
-        $table->foreignId('user_id')->constrained('user')->onDelete('cascade');
-
+    Schema::create('health_data_report', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('report_id')->constrained('report')->onDelete('cascade');
+        $table->foreignId('health_data_id')->constrained('health_data')->onDelete('cascade');
         $table->timestamps();
     });
 }
 
-    
-    
 
     /**
      * Reverse the migrations.
@@ -36,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('report');
+        Schema::dropIfExists('health_data_reports');
     }
 };
