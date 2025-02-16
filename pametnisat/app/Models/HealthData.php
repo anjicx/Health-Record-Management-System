@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class HealthData extends Model
 {
     use HasFactory;
+    public static $deviceTimestamps = [];
+
 
     protected $fillable = ['timestamp', 'heart_rate', 'systolic_bp', 'diastolic_bp', 'spo2', 'steps', 'calories_burned', 'sleep_quality', 'stress_level'];
 
@@ -15,4 +17,9 @@ class HealthData extends Model
     {
         return $this->belongsToMany(Report::class, 'health_data_report', 'health_data_id', 'report_id');
     }
+    public function device()
+    {
+        return $this->belongsTo(Device::class);
+    }
+    
 }

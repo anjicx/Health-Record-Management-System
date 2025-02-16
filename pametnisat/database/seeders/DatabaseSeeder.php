@@ -13,7 +13,6 @@ class DatabaseSeeder extends Seeder
             DeviceSeeder::class,
             HealthDataSeeder::class,
             ReportSeeder::class,
-            HealthDataReportSeeder::class,
         ]);
     }
 }

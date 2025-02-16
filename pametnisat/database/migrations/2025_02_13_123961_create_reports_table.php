@@ -19,6 +19,22 @@ return new class extends Migration
         $table->date('creationDate');
         $table->time('creationTime');
         $table->string('category'); //dnevni mesecni itd
+        $table->json('health_data_ids')->nullable(); // Čuva listu ID-eva
+
+
+        $table->enum('risk_level', ['low', 'medium', 'high'])->default('low');
+        $table->integer('average_heart_rate')->nullable();
+        $table->integer('max_heart_rate')->nullable();
+        $table->integer('min_heart_rate')->nullable();
+        $table->string('average_bp')->nullable();
+        $table->string('spo2_trend')->nullable();
+        $table->integer('steps_total')->nullable();
+        $table->float('calories_burned_total')->nullable();
+        $table->integer('sleep_quality_avg')->nullable();
+        $table->integer('stress_level_avg')->nullable();
+
+
+
 
         $table->foreignId('user_id')->constrained('user')->onDelete('cascade');
 

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Device;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,11 +17,34 @@ class DeviceFactory extends Factory
      * @return array<string, mixed>
      */
 
-    public function definition()
-    {
-        return [
-            'name' => $this->faker->word,
-            'type' => $this->faker->randomElement(['Wearable', 'Medical Device', 'Smartwatch']),
-        ];
-    }
+     public function definition()
+     {
+             return [
+                'name' => $this->faker->word,
+                'type' => $this->faker->randomElement(['Wearable', 'Medical Device', 'Smartwatch']),
+                'user_id' => User::factory(), // Automatski kreira korisnika ako ne postoji
+            ];
+            
+        
+     }
+ 
+     /**
+      * Configure the factory to assign the device to a user.
+      *
+      * @return \Illuminate\Database\Eloquent\Factories\Factory
+      */
+      public function configure()
+      {
+          return $this->afterCreating(function (Device $device) {
+              // Uzimamo nasumičnog postojećeg korisnika
+              $user = User::inRandomOrder()->first();
+      
+              // Ako nema nijednog korisnika u bazi, nemoj dodeljivati user_id (ako je nullable)
+              if ($user) {
+                  $device->user_id = $user->id;
+                  $device->save();
+              }
+          });
+      }
+      
 }

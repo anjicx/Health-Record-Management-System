@@ -10,6 +10,9 @@ class Report extends Model
 
     protected $fillable = ['user_id', 'creationDate', 'creationTime', 'category'];
     protected $table = 'report'; // Eksplicitno definišemo ime tabele
+    protected $casts = [
+        'health_data_ids' => 'array',
+    ];
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -17,7 +20,8 @@ class Report extends Model
 
     public function healthData()
     {
-        return $this->belongsToMany(HealthData::class, 'health_data_report', 'report_id', 'health_data_id');
+        return HealthData::whereIn('id', $this->health_data_ids ?? []);
     }
+
 }
 
