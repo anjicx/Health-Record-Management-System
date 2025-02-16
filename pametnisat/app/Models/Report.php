@@ -9,7 +9,7 @@ class Report extends Model
     use HasFactory;
 
     protected $fillable = ['user_id', 'creationDate', 'creationTime', 'category'];
-
+    protected $table = 'report'; // Eksplicitno definišemo ime tabele
     public function user()
     {
         return $this->belongsTo(User::class);

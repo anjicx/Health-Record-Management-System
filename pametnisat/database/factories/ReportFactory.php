@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Report;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -14,10 +16,11 @@ class ReportFactory extends Factory
      *
      * @return array<string, mixed>
      */
+
     public function definition()
     {
         return [
-            'user_id' => UserFactory::inRandomOrder()->first()->id ?? UserFactory::factory(),
+            'user_id' => User::inRandomOrder()->first()->id ?? UserFactory::factory(),
             'creationDate' => now()->toDateString(),
             'creationTime' => now()->toTimeString(),
             'category' => $this->faker->randomElement(['Daily Report', 'Health Risk', 'Activity Summary']),

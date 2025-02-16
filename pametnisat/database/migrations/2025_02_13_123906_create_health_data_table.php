@@ -16,6 +16,7 @@ return new class extends Migration
     {
         Schema::create('health_data', function (Blueprint $table) {
             $table->id(); // Primarni ključ
+            
             $table->timestamp('timestamp'); // Vreme merenja
             $table->integer('heart_rate'); // BPM
             $table->integer('systolic_bp');
@@ -25,6 +26,7 @@ return new class extends Migration
             $table->float('calories_burned');
             $table->integer('sleep_quality');
             $table->integer('stress_level');
+            $table->foreignId('device_id')->constrained('device')->onDelete('cascade');
             $table->timestamps();
         });
     }

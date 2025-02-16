@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Device;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -14,12 +15,12 @@ class DeviceFactory extends Factory
      *
      * @return array<string, mixed>
      */
+
     public function definition()
     {
         return [
             'name' => $this->faker->word,
             'type' => $this->faker->randomElement(['Wearable', 'Medical Device', 'Smartwatch']),
-            'connectionStatus' => $this->faker->boolean,
         ];
     }
 }

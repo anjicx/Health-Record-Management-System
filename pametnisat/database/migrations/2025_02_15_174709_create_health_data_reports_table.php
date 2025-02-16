@@ -13,9 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('health_data_reports', function (Blueprint $table) {
-            $table->id();
+        Schema::create('health_data_report', function (Blueprint $table) {
+
+            $table->id();//njegov id
+            //id report i health_data
             $table->foreignId('health_data_id')->constrained('health_data')->onDelete('cascade');
+            $table->foreignId('report_id')->constrained('report')->onDelete('cascade');
+           //stvari koje se pamte na asocij klasi
             $table->text('summary')->nullable();
             $table->enum('risk_level', ['low', 'medium', 'high'])->default('low');
             $table->integer('average_heart_rate')->nullable();
@@ -40,6 +44,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('health_data_reports');
+        Schema::dropIfExists('health_data_report');
     }
 };

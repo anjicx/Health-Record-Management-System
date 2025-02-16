@@ -18,6 +18,8 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     //masovno koriscenje insert
+    protected $table = 'user'; // Eksplicitno definišemo ime tabele
+
     protected $fillable = [
         'username',
         'email',
