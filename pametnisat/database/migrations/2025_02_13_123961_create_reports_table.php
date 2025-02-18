@@ -19,7 +19,6 @@ return new class extends Migration
         $table->date('creationDate');
         $table->time('creationTime');
         $table->string('category'); //dnevni mesecni itd
-        $table->json('health_data_ids')->nullable(); // Čuva listu ID-eva
 
 
         $table->enum('risk_level', ['low', 'medium', 'high'])->default('low');
@@ -33,11 +32,8 @@ return new class extends Migration
         $table->integer('sleep_quality_avg')->nullable();
         $table->integer('stress_level_avg')->nullable();
 
-
-
-
+        $table->json(column: 'health_data_ids')->nullable(); // Čuva listu ID-eva
         $table->foreignId('user_id')->constrained('user')->onDelete('cascade');
-
         $table->timestamps();
     });
 }
