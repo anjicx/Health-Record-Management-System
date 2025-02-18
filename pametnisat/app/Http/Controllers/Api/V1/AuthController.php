@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Password;
+
 use Validator;
 
 class AuthController extends Controller
@@ -70,6 +72,66 @@ class AuthController extends Controller
         'token' => $token
     ], 200);
 }
+
+
+public function sendPasswordResetLink(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email|exists:user,email', // da l ima u bazi i da li je u formatu emaila
+    ]);
+
+    $status = Password::sendResetLink($request->only('email'));
+
+    if ($status === Password::RESET_LINK_SENT) {
+        return response()->json(['message' => 'A password reset link has been sent to your email.']);
+    }
+
+    // greške moguće pri slanju linka
+    $errorMessages = [
+        Password::INVALID_USER => 'The provided email does not exist in the base.',
+        Password::RESET_THROTTLED => 'Too many reset attempts. Please try again later.',
+        Password::RESET_LINK_SENT => 'Reset link was already sent. Check your email.',
+    ];
+
+    return response()->json([
+        'message' => $errorMessages[$status] ?? 'An unexpected error occurred while sending the reset link. Please try again later.'
+    ], 400);
+}
+
+
+
+
+public function resetPassword(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email|exists:user,email',
+        'token' => 'required',
+        'password' => 'required|string|min:6|confirmed',
+    ]);
+
+    $status = Password::reset(
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function ($user, $password) {
+            $user->forceFill([
+                'password' => Hash::make($password)
+            ])->save();
+        }
+    );
+    if ($status === Password::PASSWORD_RESET) {
+        return response()->json(['message' => 'Your password has been successfully reset. You can now log in with your new password.']);
+    } $errorMessages = [
+        Password::INVALID_TOKEN => 'The reset token is invalid or expired. Please request a new link.',
+        Password::INVALID_USER => 'The provided email does not exist in our records.',
+    ];
+
+    return response()->json([
+        'message' => $errorMessages[$status] ?? 'An unexpected error occurred. Please try again.'
+    ], 400);
+}
+
+
+
+
 
 public function logout(Request $request)
 {
