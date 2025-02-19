@@ -16,22 +16,28 @@ class HealthDataFactory extends Factory
      *
      * @return array<string, mixed>
      */
-
+    protected $model = HealthData::class;
 
 //ovo se generišu podaci svi sem id-eva fk jer oni će biti odabrani
      public function definition()
      {   
          // Izaberi postojeći uređaj
-         $device = Device::inRandomOrder()->first();  
-         $deviceId = $device->id;
+         $deviceId = null; 
+
          
-         // Ako već postoji vreme za ovaj uređaj, dodaj 30s; inače, postavi na sadašnje vreme
-         if (isset(HealthData::$deviceTimestamps[$deviceId])) {
-             HealthData::$deviceTimestamps[$deviceId] = date("Y-m-d H:i:s", strtotime(HealthData::$deviceTimestamps[$deviceId] . " +30 seconds"));
-         } else {
-             HealthData::$deviceTimestamps[$deviceId] = date("Y-m-d H:i:s");
-         }
-         
+         if ($deviceId) {
+            if (isset(HealthData::$deviceTimestamps[$deviceId])) {
+                HealthData::$deviceTimestamps[$deviceId] = date("Y-m-d H:i:s", strtotime(HealthData::$deviceTimestamps[$deviceId] . " +30 seconds"));
+            } else {
+                $lastTimestamp = HealthData::where('device_id', $deviceId)
+                    ->orderBy('timestamp', 'desc')
+                    ->value('timestamp');
+
+                HealthData::$deviceTimestamps[$deviceId] = $lastTimestamp 
+                    ? date("Y-m-d H:i:s", strtotime($lastTimestamp . " +30 seconds")) 
+                    : date("Y-m-d H:i:s");
+            }
+        }
          return [
              'timestamp' => HealthData::$deviceTimestamps[$deviceId], // Pristup statičkoj promenljivoj
              'heart_rate' => $this->faker->numberBetween(60, 100),

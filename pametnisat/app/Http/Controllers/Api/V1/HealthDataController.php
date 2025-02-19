@@ -23,11 +23,13 @@ class HealthDataController extends Controller
         return response()->json(['error' => 'Device not found.'], 404);
     }
 
-    // Generiši 150 HealthData zapisa za odabrani uređaj i korisnika
-    HealthData::factory()->count(150)->create([
-        'user_id' => $user->id,    // Dodeljujemo ID trenutno ulogovanog korisnika
-        'device_id' => $device->id // Dodeljujemo ID odabranog uređaja od učitanog find
-    ]);
+      // Generiši 150 HealthData zapisa za odabrani uređaj i korisnika
+      HealthData::factory()
+      ->count(150)
+      ->state(['device_id' => $device->id])//postavi id uređaja izmeni se deo null na ovaj sa state
+      ->create([
+          'user_id' => $user->id, // Postavi ID trenutno ulogovanog korisnika
+      ]);
 
     return response()->json(['message' => 'Your data is successfully loaded.']);//uspešno upisano u bazu
 }
