@@ -10,7 +10,7 @@ class Device extends Model
     use HasFactory;
 
     protected $fillable = ['name', 'type'];
-    protected $table = 'device'; // Eksplicitno definišemo ime tabele
+    protected $table = 'device'; 
 
     public function healthData()
     {

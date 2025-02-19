@@ -22,29 +22,10 @@ class DeviceFactory extends Factory
              return [
                 'name' => $this->faker->word,
                 'type' => $this->faker->randomElement(['Wearable', 'Medical Device', 'Smartwatch']),
-                'user_id' => User::factory(), // Automatski kreira korisnika ako ne postoji
             ];
             
         
      }
  
-     /**
-      * Configure the factory to assign the device to a user.
-      *
-      * @return \Illuminate\Database\Eloquent\Factories\Factory
-      */
-      public function configure()
-      {
-          return $this->afterCreating(function (Device $device) {
-              // Uzimamo nasumičnog postojećeg korisnika
-              $user = User::inRandomOrder()->first();
-      
-              // Ako nema nijednog korisnika u bazi, nemoj dodeljivati user_id (ako je nullable)
-              if ($user) {
-                  $device->user_id = $user->id;
-                  $device->save();
-              }
-          });
-      }
       
 }

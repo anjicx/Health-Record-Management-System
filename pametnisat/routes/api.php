@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\DeviceController;
+use App\Http\Controllers\Api\V1\HealthDataController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Resources\V1\UserResource;
 use Illuminate\Http\Request;
@@ -48,6 +50,10 @@ Route::post('/forgot-password', [AuthController::class, 'sendPasswordResetLink']
     
         Route::post('/logout', [AuthController::class, 'logout']);//odjava  
 
+        Route::post('/generate-health-data', [HealthDataController::class, 'generateHealthData']);
+        //za generisanje podataka healthdata od kojih se izveštaji onda prave
+        
+        Route::get('/devices', [DeviceController::class, 'index']);//za dobijanje svih uređaja
 
 
     });

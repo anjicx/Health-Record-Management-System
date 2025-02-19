@@ -9,43 +9,19 @@ use Illuminate\Http\Request;
 class DeviceController extends Controller
 {
 
+    //da dobiješ sve uređaje za cmb uređaja
     public function index()
     {
-        //
+        $devices = Device::all(); // Dohvatanje svih uređaja iz baze
+        return response()->json($devices); // Vraćamo listu uređaja
     }
 
     
-    public function create()
-    {
-        //
-    }
-
-    
-    public function store(Request $request)
-    {
-        //
-    }
-
-   
     public function show(Device $device)
     {
         //
     }
 
     
-    public function edit(Device $device)
-    {
-        //
-    }
 
-        public function update(Request $request, Device $device)
-    {
-        //
-    }
-
-    
-    public function destroy(Device $device)
-    {
-        //
-    }
 }

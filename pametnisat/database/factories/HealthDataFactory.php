@@ -18,15 +18,11 @@ class HealthDataFactory extends Factory
      */
 
 
-
+//ovo se generišu podaci svi sem id-eva fk jer oni će biti odabrani
      public function definition()
      {   
-         // Izaberi postojeći uređaj, ako ne postoji nijedan, baci izuzetak
-         $device = Device::inRandomOrder()->first();
-         if (!$device) {
-             throw new \Exception("Nema dostupnih uređaja u bazi podataka.");
-         }
-         
+         // Izaberi postojeći uređaj
+         $device = Device::inRandomOrder()->first();  
          $deviceId = $device->id;
          
          // Ako već postoji vreme za ovaj uređaj, dodaj 30s; inače, postavi na sadašnje vreme
@@ -37,7 +33,6 @@ class HealthDataFactory extends Factory
          }
          
          return [
-             'device_id' => $deviceId,
              'timestamp' => HealthData::$deviceTimestamps[$deviceId], // Pristup statičkoj promenljivoj
              'heart_rate' => $this->faker->numberBetween(60, 100),
              'systolic_bp' => $this->faker->numberBetween(110, 140),
