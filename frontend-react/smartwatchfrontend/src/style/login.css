@@ -1,0 +1,106 @@
+.login-container {
+    background-image: url('../images/main.jpg'); /* Putanja do slike */
+    background-size: cover;
+    background-position: center bottom; /* Centrira sliku na dnu */
+    min-height: 100vh; /* Da zauzima celu visinu ekrana */
+    display: flex;
+    flex-direction: column; /* Postavlja elemente u kolonu */
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Stilizovanje citata */
+.quote-container {
+    max-width: 600px;
+    text-align: center;
+    margin-bottom: 20px; /* Razmak između citata i forme */
+}
+
+.quote-container h1 {
+    font-size: clamp(20px, 3vw, 32px); 
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.quote-container p {
+    font-size: clamp(16px, 2vw, 24px);
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+    font-style: italic;
+}
+
+/* Stilizovanje login forme */
+.login-card {
+    background: rgba(255, 255, 255, 0.9); 
+    padding: 50px; 
+    border-radius: 12px;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+/* Veći font za labele */
+.login-card label {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Veći placeholderi */
+.login-card input::placeholder {
+    font-size: 18px;
+    color: #999;
+}
+
+/* Stilizacija input polja */
+.login-card input {
+    font-size: 18px;
+    padding: 14px; /* Veće polje */
+    border-radius: 6px;
+}
+
+
+/* Stilizacija dugmeta */
+.login-card button {
+    background-color: #205145;
+    color: white;
+    font-size: 20px;
+    padding: 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.3s ease;
+}
+
+.login-card button:hover {
+    background-color: #0ca045;
+}
+
+
+
+
+/* Stil za registracioni link */
+.register-text {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #333;
+}
+
+.register-text a {
+    color: #205145;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.register-text a:hover {
+    text-decoration: underline;
+}
+.form{
+    margin-top: 70px;
+
+
+}
