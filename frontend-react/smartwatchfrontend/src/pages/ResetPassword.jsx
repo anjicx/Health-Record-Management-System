@@ -1,6 +1,7 @@
 //deo za unos nove lozinke i dobijanje validacionog tokena
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import "../style/resetpassw.css";
 import axios from "axios";
 
 const ResetPassword = () => {
