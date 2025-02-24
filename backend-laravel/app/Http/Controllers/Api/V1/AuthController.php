@@ -4,11 +4,16 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\UserResource;
 use App\Models\User;
+use Carbon\Carbon;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 
+use Log;
+use Mail;
+use Str;
 use Validator;
 
 class AuthController extends Controller
@@ -83,64 +88,71 @@ class AuthController extends Controller
         ], 200);
     }
 
-
+    //generisanje linka koji preusmerava na formu i slanje na mejl
     public function sendPasswordResetLink(Request $request)
     {
         $request->validate([
             'email' => 'required|email|exists:user,email', // da l ima u bazi i da li je u formatu emaila
         ]);
 
-        $status = Password::sendResetLink($request->only('email'));
+        $user = User::where('email', $request->email)->first();
 
-        if ($status === Password::RESET_LINK_SENT) {
-            return response()->json(['message' => 'A password reset link has been sent to your email.']);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
         }
+        // Kreiranje tokena ručno jer Laravel-ov metod šalje link ka backendu
+        $token = Str::random(60);
+        DB::table('password_resets')->updateOrInsert(
+            ['email' => $user->email],
+            ['token' => $token, 'created_at' => Carbon::now()]
+        );
 
-        // greške moguće pri slanju linka
-        $errorMessages = [
-            Password::INVALID_USER => 'The provided email does not exist in the base.',
-            Password::RESET_THROTTLED => 'Too many reset attempts. Please try again later.',
-            Password::RESET_LINK_SENT => 'Reset link was already sent. Check your email.',
-        ];
+        // FRONTEND URL koji korisnik treba da poseti
+        $frontendUrl = env('FRONTEND_URL') . "/reset-password/" . $token;
 
-        return response()->json([
-            'message' => $errorMessages[$status] ?? 'An unexpected error occurred while sending the reset link. Please try again later.'
-        ], 400);
+        // Pošalji email
+        Mail::raw("Click here to reset your password: " . $frontendUrl, function ($message) use ($user) {
+            $message->to($user->email)
+                ->subject('Reset Your Password');
+        });
+        //     $user->sendPasswordResetNotification($frontendUrl);
+
+        return response()->json(['message' => 'A password reset link has been sent to your email.']);
+
+
+
     }
-
-
 
 
     public function resetPassword(Request $request)
     {
+        // VALIDACIJA
         $request->validate([
-            'email' => 'required|email|exists:user,email',
             'token' => 'required',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password)
-                ])->save();
-            }
-        );
-        if ($status === Password::PASSWORD_RESET) {
-            return response()->json(['message' => 'Your password has been successfully reset. You can now log in with your new password.']);
+        //passwordreset:: traži i mejl a ne treba jer je već poslato pa po tokenu primljenom može pretraga
+        //na ovaj način pronalazi po tokenu
+        $resetData = DB::table('password_resets')->where('token', $request->token)->first();
+
+        if (!$resetData) {
+            return response()->json(['message' => 'The reset token is invalid or expired. Please request a new link.'], 400);
         }
-        $errorMessages = [
-            Password::INVALID_TOKEN => 'The reset token is invalid or expired. Please request a new link.',
-            Password::INVALID_USER => 'The provided email does not exist in our records.',
-        ];
+        // Pronađi email preko tokena u tabeli password_resets
+        $user = User::where('email', $resetData->email)->first();
+        if (!$user) {
+            return response()->json(['message' => 'The provided email does not exist in our records.'], 400);
+        }
 
-        return response()->json([
-            'message' => $errorMessages[$status] ?? 'An unexpected error occurred. Please try again.'
-        ], 400);
+        // Resetuj lozinku
+        $user->update(['password' => Hash::make($request->password)]);
+
+        // Obrisi token iz password_resets nakon resetovanja
+        DB::table('password_resets')->where('email', $resetData->email)->delete();
+        //vrati odgovor da je resetovana lozinka
+        return response()->json(['message' => 'Your password has been successfully reset. You can now log in with your new password.']);
     }
-
-
 
 
 

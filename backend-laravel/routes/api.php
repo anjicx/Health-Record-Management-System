@@ -28,18 +28,10 @@ Route::post('/login', [AuthController::class, 'login'])->name('api.login');
 //zaboravljena lozinka-ne mozes se prijaviti!
 
 //slanje linka za resetovanje na mejl
-Route::post('/forgot-password', [AuthController::class, 'sendPasswordResetLink']);
+Route::post('/forgot-password', action: [AuthController::class, 'sendPasswordResetLink']);
 
-//resetovanje lozinke
-
-/*ovaj deo ne treba jer ce u react-u biti uradjeno bez blade fajla!*/
-//kada se klikne na password reset dugme na mejlu vraca Blade view auth.passwords.reset
-//token da verifikuje validnost url-a blade fajl je u resources delu view
-//Route::get('/reset-password/{token}', function ($token) {
-//  return view('auth.passwords.reset', ['token' => $token]);
-//})->name('password.reset'); 
-
-Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.reset');
+;
 
 
 //korisnik mora biti vec prijavljen  da bi ovo se koristilo:
