@@ -1,0 +1,63 @@
+  /* Stilovi za veće ekrane (računar) */
+
+.navbar {
+    height: 100px; /* Podrazumevana visina */
+    padding: 0;
+  }
+  
+  .nav-link {
+    font-size: 20px; 
+    font-weight: bold; 
+
+  }
+  
+  .nav-link i {
+    font-size: 40px; 
+  }
+  
+  .nav-link p {
+    font-size: 17px;
+    font-weight: bold; /* Bolduje */
+    margin: 2px 0 0;
+
+
+  }
+
+  /* Stilovi za TABLETE (manji ekrani) */
+  @media (max-width: 768px) {
+    .navbar {
+      height: 65px; 
+    }
+  
+    .nav-link {
+      font-size: 14px;
+    }
+  
+    .nav-link i {
+      font-size: 28px; 
+    }
+  
+    .nav-link p {
+      font-size: 10px;
+    }
+  }
+  
+  /* Stilovi za MOBILNE TELEFONE (još manji ekrani) */
+  @media (max-width: 480px) {
+    .navbar {
+      height: 60px;
+    }
+  
+    .nav-link {
+      font-size: 12px;
+    }
+  
+    .nav-link i {
+      font-size: 24px;
+    }
+  
+    .nav-link p {
+      font-size: 9px;
+    }
+  }
+  
