@@ -2,7 +2,9 @@
 
 .navbar {
     height: 100px; /* Podrazumevana visina */
-    padding: 0;
+    padding-bottom: 0px; /* Ostavlja prostor ispod */
+
+    
   }
   
   .nav-link {
@@ -22,6 +24,7 @@
 
 
   }
+  
 
   /* Stilovi za TABLETE (manji ekrani) */
   @media (max-width: 768px) {

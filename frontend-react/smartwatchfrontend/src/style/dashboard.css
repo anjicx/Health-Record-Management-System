@@ -1,0 +1,37 @@
+/* Glavni kontejner sa slikom kao pozadinom */
+.dashboard-container {
+    min-height: 100vh; /* Omogućava skrolovanje ako ima više sadržaja */
+    width: 100%;
+    background: url('../images/main.jpg') no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed; /* Pozadina ostaje fiksirana dok se skroluje */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+}
+
+
+/* Stil za ostale kartice */
+.info-card {
+    width: 90%;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.9); /* Providna bela */
+    color: black;
+    text-align: center;
+    padding: 15px;
+    margin-top: 10px;
+    border-radius: 10px;
+    font-size: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Ikonice u karticama */
+.info-card i,
+.main-card i {
+    margin-bottom: 5px;
+}

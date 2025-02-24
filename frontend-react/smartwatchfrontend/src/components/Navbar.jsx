@@ -5,7 +5,7 @@ import "../style/navbar.css";
 function NavBar() {
   return (
     <nav
-      className="navbar navbar-expand-lg fixed-bottom"
+      className="navbar navbar-expand-lg"
       style={{ backgroundColor: "#4ab44a", padding: "5px 0" }}
     >
       <div className="container-fluid d-flex justify-content-between px-4">
