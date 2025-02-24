@@ -4,6 +4,8 @@ import './App.css';
 import NavBar from "./components/Navbar";//komponenta navigacioni bar na svakoj stranici(sem)
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 function App() {
   return (
     <Router>
@@ -17,11 +19,12 @@ function MainContent() {
   const location = useLocation(); //useLocation mora unutar Router zato izdvoljeno
   return (
     <>
-      {location.pathname !== "/" ||"/register" && <NavBar />} {/* Sakrij NavBar na register i login stranici */}
+      { location.pathname === "/dashboard" && <NavBar /> }
       <Routes>
         <Route path="/" element={<Login />} />{/* ako nema ništa znači početna stranica */}
         <Route path="/register" element={<Register />} />{/* ako nema ništa znači početna stranica */}
-
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
       </Routes>
     </>
   );
