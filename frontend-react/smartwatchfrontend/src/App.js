@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
+import ConnectDevice from "./pages/ConnectDevice";
 
 function App() {
   return (
@@ -19,15 +20,23 @@ function App() {
 //  nova komponentu  nalazi UNUTAR Router-a
 function MainContent() {
   const location = useLocation(); //useLocation mora unutar Router zato izdvoljeno
-  return (
-    <>
-      { location.pathname === "/dashboard" && <NavBar /> }
+
+  
+    const hideNavbarRoutes = ["/register", "/forgot-password", "/reset-password"];
+
+return (
+  <>
+  
+
+          {!hideNavbarRoutes.includes(location.pathname) && <NavBar />}
       <Routes>
         <Route path="/" element={<Login />} />{/* ako nema ništa znači početna stranica */}
         <Route path="/register" element={<Register />} />{/* ako nema ništa znači početna stranica */}
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/device" element={<ConnectDevice />} />
+
 
       </Routes>
     </>

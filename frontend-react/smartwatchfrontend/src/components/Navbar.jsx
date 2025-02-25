@@ -6,7 +6,7 @@ function NavBar() {
   return (
     <nav
       className="navbar navbar-expand-lg"
-      style={{ backgroundColor: "#4ab44a", padding: "5px 0" }}
+      style={{ backgroundColor: "#1a9041", padding: "5px 0" }}
     >
       <div className="container-fluid d-flex justify-content-between px-4">
         <Link

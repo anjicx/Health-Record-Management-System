@@ -1,0 +1,82 @@
+.device-container {
+    min-height: 100vh; /* Omogućava skrolovanje ako ima više sadržaja */
+    width: 100%;
+    background: url('../images/watchh.webp') no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed; /* Pozadina ostaje fiksirana dok se skroluje */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Centriranje na ekranu */
+    padding: 60px;
+  }
+  
+  .device-title {
+    font-size: 27px;
+    font-weight: bold;
+    margin-bottom: 130px;
+    color:rgba(255, 255, 255, 0.9);
+  }
+  .device-card {
+    background: rgba(255, 255, 255, 0.9); /* Providna bela */
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px; /* Malo više prostora */
+    width: 350px;
+    text-align: center;
+    transition: all 0.3s ease-in-out; /* Glatka promena veličine */
+  }
+  .device-image {
+    width: 100%;
+    max-width: 200px;
+    margin-bottom: 20px;
+  }
+  
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .btn {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  
+  .btn-one {
+    background: #1a9041;
+  }
+  
+  .btn-two {
+    background: #1a9041;
+    color: white;
+    margin-left: 10px;
+  }
+  
+  /* Povećava karticu na desktop ekranima */
+  @media (min-width: 1000px) {
+    .device-card {
+      width: 740px; /* Duplo veća širina */
+    }
+  
+    .device-title {
+      font-size: 32px;
+      margin-bottom: 35px;
+
+    }
+  
+    .device-image {
+      max-width: 700px; /* Povećava sliku sata */
+    }
+  
+    .btn {
+      font-size: 18px; /* Veće dugme */
+      padding: 12px;
+    }
+  }
+  
