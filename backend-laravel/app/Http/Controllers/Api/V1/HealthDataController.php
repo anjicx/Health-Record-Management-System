@@ -10,46 +10,55 @@ use Illuminate\Http\Request;
 class HealthDataController extends Controller
 {
     public function generateHealthData(Request $request)
-{
-    $user = auth()->user(); // Trenutno ulogovani korisnik 
+    {
+        try {
 
-    // Uzimamo ID uređaja koji je korisnik odabrao iz zahteva
-    $device_id = $request->device_id;
+            $user = auth()->user(); // Trenutno ulogovani korisnik 
+            if (!$user) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
 
-    // Proveri da li uređaj postoji u bazi -jer ti ga vratio react pa provera
-    $device = Device::find($device_id);
+            $validated = $request->validate([
+                'device_id' => 'required|integer|exists:device,id',
+            ]);
 
-    if (!$device) {
-        return response()->json(['error' => 'Device not found.'], 404);
+            $device_id = $validated['device_id'];
+
+
+            // Generiši 150 HealthData zapisa za odabrani uređaj i korisnika
+            HealthData::factory()
+                ->count(150)
+                ->create([
+                    'user_id' => $user->id, // Postavi ID trenutno ulogovanog korisnika
+                    'device_id' => $device_id, // Dodaj device_id direktno u create
+
+                ]);
+
+            return response()->json(['message' => 'Your data is successfully loaded.']);//uspešno upisano u bazu
+
+
+        } catch (\Exception $e) {
+            \Log::error('Error in generateHealthData: ' . $e->getMessage());
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
     }
-
-      // Generiši 150 HealthData zapisa za odabrani uređaj i korisnika
-      HealthData::factory()
-      ->count(150)
-      ->state(['device_id' => $device->id])//postavi id uređaja izmeni se deo null na ovaj sa state
-      ->create([
-          'user_id' => $user->id, // Postavi ID trenutno ulogovanog korisnika
-      ]);
-
-    return response()->json(['message' => 'Your data is successfully loaded.']);//uspešno upisano u bazu
-}
     public function index()
     {
         //
     }
 
-   
+
     public function create()
     {
         //
     }
 
-        public function store(Request $request)
+    public function store(Request $request)
     {
         //
     }
 
-    
+
     public function show(HealthData $healthData)
     {
         //
@@ -60,13 +69,13 @@ class HealthDataController extends Controller
         //
     }
 
-    
+
     public function update(Request $request, HealthData $healthData)
     {
         //
     }
 
-    
+
     public function destroy(HealthData $healthData)
     {
         //

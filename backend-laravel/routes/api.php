@@ -31,11 +31,13 @@ Route::post('/login', [AuthController::class, 'login'])->name('api.login');
 Route::post('/forgot-password', action: [AuthController::class, 'sendPasswordResetLink']);
 
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.reset');
-;
+
 
 
 //korisnik mora biti vec prijavljen  da bi ovo se koristilo:
 Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('/devices/random', [DeviceController::class, 'getRandomDevices']);
 
     Route::get('/user', function (Request $request) {
         return new UserResource($request->user());//podaci o korisniku
@@ -46,7 +48,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/generate-health-data', [HealthDataController::class, 'generateHealthData']);
     //za generisanje podataka healthdata od kojih se izveštaji onda prave
 
-    Route::get('/devices', [DeviceController::class, 'index']);//za dobijanje svih uređaja
 
 
 });

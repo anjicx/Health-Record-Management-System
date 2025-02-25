@@ -22,13 +22,13 @@ function MainContent() {
   const location = useLocation(); //useLocation mora unutar Router zato izdvoljeno
 
   
-    const hideNavbarRoutes = ["/register", "/forgot-password", "/reset-password"];
+    const hideNavbarRoutes = ["/register","/", "/forgot-password", "/reset-password"];
 
 return (
   <>
   
 
-          {!hideNavbarRoutes.includes(location.pathname) && <NavBar />}
+       {!hideNavbarRoutes.includes(location.pathname) && <NavBar />}
       <Routes>
         <Route path="/" element={<Login />} />{/* ako nema ništa znači početna stranica */}
         <Route path="/register" element={<Register />} />{/* ako nema ništa znači početna stranica */}

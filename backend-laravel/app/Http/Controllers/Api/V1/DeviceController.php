@@ -16,12 +16,17 @@ class DeviceController extends Controller
         return response()->json($devices); // Vraćamo listu uređaja
     }
 
-    
+
     public function show(Device $device)
     {
         //
     }
 
-    
+    public function getRandomDevices()
+    {
+        $devices = Device::inRandomOrder()->limit(5)->get(); // vraća 5 nasumičnih uređaja
+        return response()->json($devices);
+    }
+
 
 }
