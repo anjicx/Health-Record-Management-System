@@ -23,16 +23,34 @@ class HealthDataController extends Controller
             ]);
 
             $device_id = $validated['device_id'];
+            // Pronađi poslednji timestamp u bazi
+            $lastTimestamp = HealthData::where('device_id', $device_id)
+                ->orderBy('timestamp', 'desc')
+                ->value('timestamp');
 
+            if (!$lastTimestamp) {
+                // Ako nema podataka, kreće se unazad 150h- da bi onda se izgenerisalo 150 redova
+                $lastTimestamp = now()->subHours(150);
+            } else {
+                // Pretvori u Carbon objekat
+                $lastTimestamp = \Carbon\Carbon::parse($lastTimestamp);
+            }
 
-            // Generiši 150 HealthData zapisa za odabrani uređaj i korisnika
-            HealthData::factory()
-                ->count(150)
-                ->create([
-                    'user_id' => $user->id, // Postavi ID trenutno ulogovanog korisnika
-                    'device_id' => $device_id, // Dodaj device_id direktno u create
+            // Generiši podatke sve dok ne dostignemo sadašnji trenutak
+            $recordsGenerated = 0;
+            $currentTime = now();
 
-                ]);
+            while ($lastTimestamp < $currentTime) {
+                HealthData::factory()
+                    ->create([
+                        'user_id' => $user->id,
+                        'device_id' => $device_id,
+                        'timestamp' => $lastTimestamp->toDateTimeString(), // Postavljamo ručno timestamp
+                    ]);
+
+                $lastTimestamp->addHour(); // Pomeraj za 1h unapred
+                $recordsGenerated++;
+            }
 
             return response()->json(['message' => 'Your data is successfully loaded.']);//uspešno upisano u bazu
 
