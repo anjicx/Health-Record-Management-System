@@ -39,17 +39,27 @@ class HealthDataController extends Controller
             // Generiši podatke sve dok ne dostignemo sadašnji trenutak
             $recordsGenerated = 0;
             $currentTime = now();
-
+            //edited for case when it is already synchronized
             while ($lastTimestamp < $currentTime) {
-                HealthData::factory()
-                    ->create([
-                        'user_id' => $user->id,
-                        'device_id' => $device_id,
-                        'timestamp' => $lastTimestamp->toDateTimeString(), // Postavljamo ručno timestamp
-                    ]);
+                // Provera da li već postoji podatak za dati timestamp i device_id
+                $exists = HealthData::where('device_id', $device_id)
+                    ->where('timestamp', $lastTimestamp->toDateTimeString())
+                    ->exists();
 
+                if (!$exists) {
+                    HealthData::factory()
+                        ->create([
+                            'user_id' => $user->id,
+                            'device_id' => $device_id,
+                            'timestamp' => $lastTimestamp->toDateTimeString(), // Postavljamo ručno timestamp
+                        ]);
+
+                    $recordsGenerated++;
+                }
                 $lastTimestamp->addHour(); // Pomeraj za 1h unapred
-                $recordsGenerated++;
+            }
+            if ($recordsGenerated === 0) {
+                return response()->json(['message' => 'The device has already been synchronized.']);
             }
 
             return response()->json(['message' => 'Your data is successfully loaded.']);//uspešno upisano u bazu
