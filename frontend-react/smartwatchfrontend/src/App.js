@@ -8,6 +8,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import ConnectDevice from "./pages/ConnectDevice";
+import ActivityReport from "./pages/ActivityReport";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ return (
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/device" element={<ConnectDevice />} />
+        <Route path="/activityreport" element={<ActivityReport />} />
 
 
       </Routes>

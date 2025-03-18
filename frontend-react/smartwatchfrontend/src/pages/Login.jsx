@@ -59,6 +59,8 @@ const Login = () => {
         "Login successful:",
         response.data
       ); /*kada je odgovor servera primljen dostupan je response->data */
+      localStorage.setItem("token", response.data.token); // Čuva token u localStorage!!!
+
       navigate(
         "/dashboard"
       ); /*preusmerava na novu stranicu nakon uspešne prijave */

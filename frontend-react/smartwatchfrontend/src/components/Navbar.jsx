@@ -27,14 +27,6 @@ function NavBar() {
 
         <Link
           className="nav-link text-white text-center small-link"
-          to="/report"
-        >
-          <i className="fas fa-chart-line fa-lg"></i> {/* Report ikona */}
-          <p>REPORT</p>
-        </Link>
-
-        <Link
-          className="nav-link text-white text-center small-link"
           to="/profile"
         >
           <i className="fas fa-user fa-lg"></i> {/* Profile ikona */}

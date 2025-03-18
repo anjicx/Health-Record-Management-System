@@ -50,6 +50,7 @@ function ConnectDevice() {
       if (!response.ok) throw new Error("Failed to synchronize data");
 
       const result = await response.json();
+      localStorage.setItem("device_id", selectedDeviceId); //postavlja zbog izveštaja dalje
       alert(result.message); // Prikaži poruku uspeha
     } catch (error) {
       console.error("Error syncing data:", error);
