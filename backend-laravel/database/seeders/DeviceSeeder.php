@@ -1,8 +1,6 @@
 <?php
 
 namespace Database\Seeders;
-
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Device;
@@ -17,8 +15,8 @@ class DeviceSeeder extends Seeder
     public function run()
     {
 
-//Generiše 20 uređaja
-    Device::factory()->count(20)->create();
+        //Generiše 20 uređaja
+        Device::factory()->count(count: 6)->create();
 
     }
 }

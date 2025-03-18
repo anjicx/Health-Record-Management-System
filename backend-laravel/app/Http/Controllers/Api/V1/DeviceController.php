@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\Device;
 use Illuminate\Http\Request;
-//app/Http/Controllers/Api/V1/DeviceController.php
 class DeviceController extends Controller
 {
 
@@ -17,10 +16,6 @@ class DeviceController extends Controller
     }
 
 
-    public function show(Device $device)
-    {
-        //
-    }
 
     public function getRandomDevices()
     {

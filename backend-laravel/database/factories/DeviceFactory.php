@@ -17,15 +17,24 @@ class DeviceFactory extends Factory
      * @return array<string, mixed>
      */
 
-     public function definition()
-     {
-             return [
-                'name' => $this->faker->word,
-                'type' => $this->faker->randomElement(['Wearable', 'Medical Device', 'Smartwatch']),
-            ];
-            
-        
-     }
- 
-      
+    public function definition()
+    {
+        $type = $this->faker->randomElement(['Wearable', 'Medical Device', 'Smartwatch']);
+
+        $name = match ($type) {
+            'Wearable' => $this->faker->randomElement(['FitBand', 'HealthTracker', 'BioMonitor']),
+            'Medical Device' => $this->faker->randomElement(['MediScan', 'PulseCheck', 'OxyMonitor']),
+            'Smartwatch' => $this->faker->randomElement(['SmartFit', 'CardioWatch', 'LifeSync']),
+            default => 'Unknown Device',
+        };
+
+        return [
+            'name' => $name . ' ' . $this->faker->numerify('V#'),
+            'type' => $type,
+        ];
+
+
+    }
+
+
 }

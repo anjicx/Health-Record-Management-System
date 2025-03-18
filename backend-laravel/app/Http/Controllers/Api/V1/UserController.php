@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\Api\V1;
-
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\UserResource;
 use App\Models\User;
@@ -15,7 +14,7 @@ class UserController extends Controller
 
     }
 
-  
+
     public function create()
     {
         //
@@ -25,28 +24,28 @@ class UserController extends Controller
     {
         $user = UserResource::create($request->all());
         return response()->json($user, 201);
-    
+
     }
 
-   
+
     public function show(User $user)
     {
         return $user;
     }
 
-    
+
     public function edit(User $user)
     {
         //
     }
 
-    
+
     public function update(Request $request, User $user)
     {
         //
     }
 
-    
+
     public function destroy(User $user)
     {
         //
