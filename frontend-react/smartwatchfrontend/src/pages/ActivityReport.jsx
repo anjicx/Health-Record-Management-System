@@ -191,6 +191,7 @@ const ActivityReport = () => {
 
   let totalStepsAggregated = 0;
   processedData.forEach((item) => {
+    // računa za period ukupan broj koraka
     totalStepsAggregated += Number(item.steps); // Konvertuje u broj da ne bude string negde PROBLEM ISPISA !!
   });
 
@@ -201,23 +202,12 @@ const ActivityReport = () => {
   } else if (period === "week") {
     displayText = `Avg: ${(totalStepsAggregated / 7).toFixed(0)}`;
   } else if (period === "month") {
-    // Broj jedinstvenih dana u mesecu
-    // Pretpostavimo da startDate sadrži datum za mesec koji želiš da analiziraš
-    const targetMonth = dayjs(startDate).format("YYYY-MM");
-
-    // Filtriraj samo one item-e čiji datum spada u targetMonth, a zatim izvuči puni datum ("YYYY-MM-DD")
-    const uniqueDaysCount = new Set(
-      processedData
-        .filter(
-          (item) =>
-            dayjs(item.timestamp, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM") ===
-            targetMonth
-        )
-        .map((item) =>
-          dayjs(item.timestamp, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD")
-        )
-    ).size;
-    displayText = `Avg: ${(totalStepsAggregated / uniqueDaysCount).toFixed(0)}`;
+    const countDays = processedData.filter((item) => item.steps > 0).length; //broj dana gde je br kor>0
+    // Ako postoje dani sa podacima, računa se prosečna vrednost, u suprotnom 0
+    displayText =
+      countDays > 0
+        ? `Avg: ${(totalStepsAggregated / countDays).toFixed(0)}`
+        : "Avg: 0";
   }
 
   //uređivanje grafikona
