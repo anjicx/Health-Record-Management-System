@@ -46,6 +46,8 @@ Route::middleware('auth:sanctum')->group(function () {
     //za generisanje podataka healthdata od kojih se izveštaji onda prave
     Route::get('/dashboard', [DashboardController::class, 'getDailySummary']);
     Route::get('/activityreport', action: [ReportController::class, 'getReport']);
+    Route::get('/caloriesreport', action: [ReportController::class, 'getReport']);
+
 
 
 

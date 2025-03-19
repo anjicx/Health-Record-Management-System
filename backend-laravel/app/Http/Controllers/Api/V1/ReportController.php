@@ -14,6 +14,13 @@ class ReportController extends Controller
         $period = $request->query('period', 'day');
         $startDate = $request->query('startDate'); // Datum iz React-a
         $start = $startDate ? Carbon::parse($startDate) : now()->startOfDay();
+        $reportField = $request->query('field');
+
+        // Definišemo dozvoljene vrednosti za field
+        $allowedFields = ['steps', 'calories_burned'];//sql injection sprečen
+        if (!in_array($reportField, $allowedFields)) {
+            $reportField = 'steps';
+        }
 
         if ($period === 'week') {
             $start = $start->startOfWeek(); // Prikazuje celu nedelju
@@ -23,33 +30,33 @@ class ReportController extends Controller
 
         if ($period === 'week') {
             $report = HealthData::whereBetween('timestamp', [$start, $start->copy()->endOfWeek()])
-                ->selectRaw('DATE(timestamp) as day, SUM(steps) as steps')
+                ->selectRaw('DATE(timestamp) as day, SUM(' . $reportField . ') as value')
                 ->groupBy('day')
                 ->orderBy('day')
                 ->get()
                 ->map(fn($item) => [
                     'timestamp' => Carbon::parse($item->day)->timestamp,
-                    'steps' => round($item->steps),
+                    'value' => round($item->value),
                 ]);
         } elseif ($period === 'day') {
             $report = HealthData::whereBetween('timestamp', [$start, $start->copy()->endOfDay()])
-                ->selectRaw('HOUR(timestamp) as hour, SUM(steps) as steps')
+                ->selectRaw('HOUR(timestamp) as hour, SUM(' . $reportField . ') as value')
                 ->groupBy('hour')
                 ->orderBy('hour')
                 ->get()
                 ->map(fn($item) => [
                     'timestamp' => Carbon::now()->setHour($item->hour)->setMinute(0)->setSecond(0)->timestamp,
-                    'steps' => $item->steps,
+                    'value' => $item->value,
                 ]);
         } else {//MESEC
             $report = HealthData::whereBetween('timestamp', [$start, $start->copy()->endOfMonth()])
-                ->selectRaw('DATE(timestamp) as day, SUM(steps) as steps')
+                ->selectRaw('DATE(timestamp) as day, SUM(' . $reportField . ') as value')
                 ->groupBy('day')
                 ->orderBy('day')
                 ->get()
                 ->map(fn($item) => [
                     'timestamp' => Carbon::parse($item->day)->timestamp,
-                    'steps' => $item->steps,
+                    'value' => $item->value,
                 ]);
         }
 

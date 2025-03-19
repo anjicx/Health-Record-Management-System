@@ -93,7 +93,7 @@ function Dashboard() {
 
       <div
         className="info-card"
-        onClick={() => handleCardClick("activityreport")}
+        onClick={() => handleCardClick("activityreport")} //klikom na karticu /activityreport str nav
       >
         <i className="fas fa-walking fa-3x text-primary"></i>
         <h4>Steps</h4>
@@ -101,7 +101,10 @@ function Dashboard() {
         <p>{(data.steps * 0.0008).toFixed(2)} km</p>
       </div>
 
-      <div className="info-card">
+      <div
+        className="info-card"
+        onClick={() => handleCardClick("caloriesreport")}
+      >
         <i className="fas fa-fire-alt fa-3x text-danger"></i>
         <h4>Calories</h4>
         <p>{data.calories} kcal</p>

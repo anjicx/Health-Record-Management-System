@@ -20,60 +20,44 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-const ActivityReport = () => {
-  //1.KUPRAVLJANJE STANJEM UNUTAR FUNKCIONALNIH KOMPONENTI
-  //setReportData fja da postavi data izveštaja-podatke dobijaš od backenda,default prazan niz
+const CaloriesReport = () => {
   const [reportData, setReportData] = useState([]);
-  //postavi dan da je default za period-bira na frontu korisnik
   const [period, setPeriod] = useState("day");
-  //postavi današnji datum za default za datum-bira na frontu korisnik
   const [startDate, setStartDate] = useState(dayjs().format("YYYY-MM-DD"));
-  //postavi da nema greški-za obaveštenja u sl greške
   const [error, setError] = useState(null);
 
-  //2.DOBIJANJE PODATAKA OD BACKENDA
   const fetchReportData = async () => {
     try {
-      //pronađi token iz localStorage za sanctum autorizaciju(svugde ovako)
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token is not available");
 
       const response = await axios.get(
-        //odabrani datum,period se šalje kao parametri
-        `http://localhost:8000/api/activityreport?period=${period}&startDate=${startDate}&field=steps`,
+        `http://localhost:8000/api/caloriesreport?period=${period}&startDate=${startDate}&field=calories_burned`, //OVDE
         {
           headers: {
-            //mora da pošalje za proveru prijavlj korisnika
             Authorization: `Bearer ${token}`,
             Accept: "application/json",
           },
         }
       );
-      //ako je uspešno prošla autorizacija odgovor dobijeni su podaci od backenda i nema greške
       setReportData(response.data);
       setError(null);
     } catch (err) {
-      //ako je neuspešno prošla autorizacija postavi grešku
       console.error("Error fetching data:", err);
       setError("Error fetching data. Please try again later.");
     }
   };
 
-  //3.PONOVO UČITAVANJE PODATAKA KADA SE IZMENI PERIOD/DATUM ILI SE KOMP PONOVO UČITA
   useEffect(() => {
     fetchReportData();
   }, [period, startDate]);
-  //4.LOGIKA POSTAVLJANJA DATUMA NAPRED/NAZAD STRELICA
-  //unazad
   const handlePrev = () => {
-    setStartDate(
-      //početni datum postavi
-      (prev) =>
-        period === "day" //ako je dan oduzmi dan
-          ? dayjs(prev).subtract(1, "day").format("YYYY-MM-DD")
-          : period === "week" //ako je ned oduzmi ned
-          ? dayjs(prev).subtract(1, "week").format("YYYY-MM-DD")
-          : dayjs(prev).subtract(1, "month").format("YYYY-MM-DD") //ako nije dan/ned->mesec je->mesec oduzmi
+    setStartDate((prev) =>
+      period === "day"
+        ? dayjs(prev).subtract(1, "day").format("YYYY-MM-DD")
+        : period === "week"
+        ? dayjs(prev).subtract(1, "week").format("YYYY-MM-DD")
+        : dayjs(prev).subtract(1, "month").format("YYYY-MM-DD")
     );
   };
   //napred
@@ -86,34 +70,24 @@ const ActivityReport = () => {
         : dayjs(prev).add(1, "month").format("YYYY-MM-DD")
     );
   };
-  //5.DOBIJANJE SUMIRANIH PODATAKA NA STUBIĆU
-  //grupisanje npr. od 23:00 do 23:59 je na jednom stubiću
   function groupDataDay(data) {
-    // Kreiramo prazan objekat za sumiranje podataka
     const groupedData = {};
 
-    // Prolazimo kroz svaki podatak i sumiramo korake po satu
     data.forEach((item) => {
-      //pretvaramo sate u ms da bi onda u utc,sa getutchours fjom izbegavamo greške sa offsetom-rešilo problme 00h
       const hour = new Date(item.timestamp * 1000).getUTCHours();
-      const hourLabel = `${String(hour).padStart(2, "0")}h`; //sati dvocifr br npr 01h
+      const hourLabel = `${String(hour).padStart(2, "0")}h`;
 
-      //ako nema ključ vrednost inicijalizuje se na 0
       if (!groupedData[hourLabel]) {
         groupedData[hourLabel] = 0;
       }
-      //na to se dodaje vrednost koraka iz item.steps
       groupedData[hourLabel] += item.value;
     });
 
-    // Kreiramo niz svih sati (0h do 23h)
     const allHours = [];
     for (let i = 0; i < 24; i++) {
       allHours.push(`${String(i).padStart(2, "0")}h`);
     }
 
-    // Za svaki sat, ako nema podatka, postavljamo vrednost 0
-    //ključ vrrednost sat,broj koraka
     return allHours.map((hourLabel) => ({
       label: hourLabel,
       value: groupedData[hourLabel] || 0,
@@ -125,42 +99,37 @@ const ActivityReport = () => {
     const startOfWeek = dayjs(startDate).startOf("week").add(1, "day");
 
     data.forEach((item) => {
-      const dayIndex = new Date(item.timestamp * 1000).getUTCDay(); // Vraća 0 (Nedelja) do 6 (Subota)
-      const correctedIndex = (dayIndex + 6) % 7; // Pomera Nedelju (0) na kraj
-      const dayLabel = daysOfWeek[correctedIndex]; // Mapira u novi poredak-grafikon treba da počne od ponedeljka
+      const dayIndex = new Date(item.timestamp * 1000).getUTCDay();
+      const correctedIndex = (dayIndex + 6) % 7;
+      const dayLabel = daysOfWeek[correctedIndex];
 
-      if (!groupedData[dayLabel]) groupedData[dayLabel] = 0; //ako ne postoji podataka postavi na 0 inicijalno
-      groupedData[dayLabel] += item.value; //ako postoji dodaj
+      if (!groupedData[dayLabel]) groupedData[dayLabel] = 0;
+      groupedData[dayLabel] += item.value;
     });
 
     return daysOfWeek.map((dayLabel, index) => ({
-      label: `${dayLabel} (${startOfWeek.add(index, "day").format("DD.MM.")})`, // Formatirano npr. "Mon (11.03.)"
+      label: `${dayLabel} (${startOfWeek.add(index, "day").format("DD.MM.")})`,
       value: groupedData[dayLabel] || 0,
     }));
   }
   function groupDataMonth(data, startDate) {
     const groupedData = {};
-    // Odredi početak meseca na osnovu startDate
     const startOfMonth = dayjs(startDate).startOf("month");
-    // broj dana u mesecu na osnovu meseca fja
     const daysInMonth = startOfMonth.daysInMonth();
 
-    // Inicijalizuj podatke svakog dana (1 do daysInMonth) na 0
     for (let day = 1; day <= daysInMonth; day++) {
       groupedData[day] = 0;
     }
 
-    // Prođi kroz sve podatke (koji dolaze na svakih 1h)
     data.forEach((item) => {
       //dani u mesecu
       const dayNumber = new Date(item.timestamp * 1000).getUTCDate();
       if (dayNumber >= 1 && dayNumber <= daysInMonth) {
-        groupedData[dayNumber] += item.value; // Saberi korake za taj dan
+        groupedData[dayNumber] += item.value;
       }
     });
-    // Kreiraj niz objekata sa labelom (dan i datum) i sumiranim koracima
     return Array.from({ length: daysInMonth }, (_, i) => {
-      const day = i + 1; // Dan u mesecu (1-indexed)
+      const day = i + 1;
       return {
         label: ` ${startOfMonth.add(i, "day").format("DD.MM.")}`,
         value: groupedData[day] || 0,
@@ -180,7 +149,7 @@ const ActivityReport = () => {
     labels: processedData.map((item) => item.label), //!!ISPIS NA X OSI
     datasets: [
       {
-        label: "steps",
+        label: "calories",
         data: processedData.map((item) => item.value),
         backgroundColor: "rgba(26, 144, 65, 0.7)",
         borderColor: "rgba(26, 144, 65, 1)",
@@ -188,25 +157,25 @@ const ActivityReport = () => {
       },
     ],
   };
-
-  let totalStepsAggregated = 0;
+  //OVDE
+  let totalCaloriesAggregated = 0;
   processedData.forEach((item) => {
     // računa za period ukupan broj koraka
-    totalStepsAggregated += Number(item.value); // Konvertuje u broj da ne bude string negde PROBLEM ISPISA !!
+    totalCaloriesAggregated += Number(item.value); // Konvertuje u broj da ne bude string negde PROBLEM ISPISA !!
   });
 
   // Računanje proseka u zavisnosti od perioda
   let displayText = "";
   if (period === "day") {
-    displayText = "Sum: " + totalStepsAggregated;
+    displayText = "Sum: " + totalCaloriesAggregated;
   } else if (period === "week") {
-    displayText = `Avg: ${(totalStepsAggregated / 7).toFixed(0)}`;
+    displayText = `Avg: ${(totalCaloriesAggregated / 7).toFixed(0)}`;
   } else if (period === "month") {
     const countDays = processedData.filter((item) => item.value > 0).length; //broj dana gde je br kor>0
     // Ako postoje dani sa podacima, računa se prosečna vrednost, u suprotnom 0
     displayText =
       countDays > 0
-        ? `Avg: ${(totalStepsAggregated / countDays).toFixed(0)}`
+        ? `Avg: ${(totalCaloriesAggregated / countDays).toFixed(0)}`
         : "Avg: 0";
   }
 
@@ -246,7 +215,7 @@ const ActivityReport = () => {
       y: {
         title: {
           display: true,
-          text: "Steps",
+          text: "Calories", //OVDE
         },
         beginAtZero: true,
       },
@@ -328,4 +297,4 @@ const ActivityReport = () => {
   );
 };
 
-export default ActivityReport;
+export default CaloriesReport;

@@ -9,6 +9,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import ConnectDevice from "./pages/ConnectDevice";
 import ActivityReport from "./pages/ActivityReport";
+import CaloriesReport from "./pages/CaloriesReport";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ return (
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/device" element={<ConnectDevice />} />
         <Route path="/activityreport" element={<ActivityReport />} />
+        <Route path="/caloriesreport" element={<CaloriesReport />} />
 
 
       </Routes>
