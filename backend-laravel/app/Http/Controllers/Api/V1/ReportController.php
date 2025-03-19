@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 class ReportController extends Controller
 {
     public function getReport(Request $request)
-    {
+    {//parametar jer sve isto je i za calories
         $period = $request->query('period', 'day');
         $startDate = $request->query('startDate'); // Datum iz React-a
         $start = $startDate ? Carbon::parse($startDate) : now()->startOfDay();
@@ -23,7 +23,7 @@ class ReportController extends Controller
 
         if ($period === 'week') {
             $report = HealthData::whereBetween('timestamp', [$start, $start->copy()->endOfWeek()])
-                ->selectRaw('DATE(timestamp) as day, AVG(steps) as steps')
+                ->selectRaw('DATE(timestamp) as day, SUM(steps) as steps')
                 ->groupBy('day')
                 ->orderBy('day')
                 ->get()
@@ -41,7 +41,7 @@ class ReportController extends Controller
                     'timestamp' => Carbon::now()->setHour($item->hour)->setMinute(0)->setSecond(0)->timestamp,
                     'steps' => $item->steps,
                 ]);
-        } else {
+        } else {//MESEC
             $report = HealthData::whereBetween('timestamp', [$start, $start->copy()->endOfMonth()])
                 ->selectRaw('DATE(timestamp) as day, SUM(steps) as steps')
                 ->groupBy('day')
