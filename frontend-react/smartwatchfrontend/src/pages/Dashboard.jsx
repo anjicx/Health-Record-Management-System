@@ -119,7 +119,10 @@ function Dashboard() {
         <p>{data.heart_rate} bpm</p>
       </div>
 
-      <div className="info-card">
+      <div
+        className="info-card"
+        onClick={() => handleCardClick("sleepqreport")}
+      >
         <i className="fas fa-bed fa-3x text-info"></i>
         <h4>Sleep quality</h4>
         <p>{getSleepQuality(data.sleep)}</p>

@@ -77,8 +77,14 @@ const CaloriesReport = () => {
       {
         label: "calories",
         data: reportData.map((item) => item.value),
-        backgroundColor: "rgba(26, 144, 65, 0.7)",
-        borderColor: "rgba(26, 144, 65, 1)",
+        backgroundColor: reportData.map((item) =>
+          item.value > 500
+            ? "rgba(99, 255, 104, 0.7)"
+            : "rgba(54, 162, 235, 0.7)"
+        ),
+        borderColor: reportData.map((item) =>
+          item.value > 500 ? "rgb(104, 255, 99)" : "rgba(54, 162, 235, 1)"
+        ),
         borderWidth: 1,
       },
     ],
@@ -107,6 +113,11 @@ const CaloriesReport = () => {
 
   //uređivanje grafikona
   const chartOptions = {
+    plugins: {
+      legend: {
+        display: false, // Isključuje prikaz legende
+      },
+    },
     responsive: true,
     maintainAspectRatio: false, // Bitno za bolji prikaz na tabletima-da ne menja po velićini koje će biti prikazane oznake
     scales: {

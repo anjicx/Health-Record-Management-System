@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\DeviceController;
 use App\Http\Controllers\Api\V1\HealthDataController;
+use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\ReportCharController;
 use App\Http\Controllers\Api\V1\ReportLineController;
 use App\Http\Controllers\Api\V1\UserController;
@@ -49,6 +50,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/activityreport', action: [ReportCharController::class, 'getReport']);
     Route::get('/caloriesreport', action: [ReportCharController::class, 'getReport']);
     Route::get('/heartratereport', action: [ReportLineController::class, 'getReport']);
+    Route::get('/sleepqreport', action: [ReportLineController::class, 'getReport']);
+    Route::get('/profile', action: [ProfileController::class, 'getReport']);
+
+
 
 
 

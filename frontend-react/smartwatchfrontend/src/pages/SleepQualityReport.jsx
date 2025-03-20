@@ -25,7 +25,7 @@ ChartJS.register(
   Legend
 );
 
-const HeartRateReport = () => {
+const SleepQualityReport = () => {
   const [reportData, setReportData] = useState([]);
   const [period, setPeriod] = useState("day");
   const [startDate, setStartDate] = useState(dayjs().format("YYYY-MM-DD"));
@@ -37,7 +37,7 @@ const HeartRateReport = () => {
       if (!token) throw new Error("Token is not available");
 
       const response = await axios.get(
-        `http://localhost:8000/api/heartratereport?period=${period}&startDate=${startDate}&field=heart_rate`,
+        `http://localhost:8000/api/sleepqreport?period=${period}&startDate=${startDate}&field=sleep_quality`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -230,4 +230,4 @@ const HeartRateReport = () => {
   );
 };
 
-export default HeartRateReport;
+export default SleepQualityReport;
