@@ -37,7 +37,7 @@ const HeartRateReport = () => {
       if (!token) throw new Error("Token is not available");
 
       const response = await axios.get(
-        `http://localhost:8000/api/activityreport?period=${period}&startDate=${startDate}&field=heart_rate`,
+        `http://localhost:8000/api/heartratereport?period=${period}&startDate=${startDate}&field=heart_rate`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -77,143 +77,12 @@ const HeartRateReport = () => {
     );
   };
 
-  // --- Dnevno grupisanje ---
-  function groupDataDay(data) {
-    const groupedData = {};
-    const count = {};
-
-    data.forEach((item) => {
-      const hour = new Date(item.timestamp * 1000).getUTCHours();
-      const hourLabel = `${String(hour).padStart(2, "0")}h`;
-
-      if (!groupedData[hourLabel]) {
-        groupedData[hourLabel] = 0;
-        count[hourLabel] = 0;
-      }
-      groupedData[hourLabel] += item.value;
-      count[hourLabel] += 1;
-    });
-
-    const allHours = [];
-    for (let i = 0; i < 24; i++) {
-      allHours.push(`${String(i).padStart(2, "0")}h`);
-    }
-
-    return allHours.map((hourLabel) => ({
-      label: hourLabel,
-      value: count[hourLabel] ? groupedData[hourLabel] / count[hourLabel] : 0,
-    }));
-  }
-
-  // --- Sedmično grupisanje ---
-  function groupDataWeek(data) {
-    const groupedData = {};
-    const count = {};
-    const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
-    let totalSum = 0;
-    let totalCount = 0;
-
-    data.forEach((item) => {
-      // Ako treba lokalno vreme, koristi getDay() umesto getUTCDay().
-      const dayIndex = new Date(item.timestamp * 1000).getUTCDay();
-      const correctedIndex = (dayIndex + 6) % 7;
-      const dayLabel = daysOfWeek[correctedIndex];
-
-      if (!groupedData[dayLabel]) {
-        groupedData[dayLabel] = 0;
-        count[dayLabel] = 0;
-      }
-
-      if (item.value > 0) {
-        groupedData[dayLabel] += item.value;
-        count[dayLabel] += 1;
-
-        totalSum += item.value;
-        totalCount += 1;
-      }
-    });
-
-    const dailyAverages = daysOfWeek.map((dayLabel) => ({
-      label: dayLabel,
-      value: count[dayLabel] > 0 ? groupedData[dayLabel] / count[dayLabel] : 0,
-    }));
-
-    const overallAverage = totalCount > 0 ? totalSum / totalCount : 0;
-
-    return { dailyAverages, overallAverage };
-  }
-
-  // --- Mesečno grupisanje ---
-  function groupDataMonth(data, startDate) {
-    const groupedData = {};
-    const count = {};
-    const startOfMonth = dayjs(startDate).startOf("month");
-    const daysInMonth = startOfMonth.daysInMonth();
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      groupedData[day] = 0;
-      count[day] = 0;
-    }
-
-    data.forEach((item) => {
-      const dayNumber = new Date(item.timestamp * 1000).getUTCDate();
-      if (dayNumber >= 1 && dayNumber <= daysInMonth) {
-        groupedData[dayNumber] += item.value;
-        count[dayNumber] += 1;
-      }
-    });
-
-    return Array.from({ length: daysInMonth }, (_, i) => {
-      const day = i + 1;
-      return {
-        label: ` ${startOfMonth.add(i, "day").format("DD.MM.")}`,
-        value: count[day] ? groupedData[day] / count[day] : 0,
-      };
-    });
-  }
-
-  // --- Odredi processedData i overallAverage ---
-  let processedData = [];
-  let overallAverage = 0;
-
-  if (period === "week") {
-    const { dailyAverages, overallAverage: weeklyAvg } =
-      groupDataWeek(reportData);
-    processedData = dailyAverages;
-    overallAverage = weeklyAvg;
-  } else if (period === "month") {
-    processedData = groupDataMonth(reportData, startDate);
-  } else {
-    // day
-    processedData = groupDataDay(reportData);
-  }
-
-  // --- Izračunaj displayText ---
-  let displayText = "";
-  if (period === "week") {
-    // Za sedmicu koristimo overallAverage
-    displayText = `Avg: ${overallAverage.toFixed(0)}`;
-  } else {
-    // Za day i month koristimo staru logiku
-    let totalHeartRateAggregated = 0;
-    processedData.forEach((item) => {
-      totalHeartRateAggregated += Number(item.value);
-    });
-    const countT = processedData.filter((item) => item.value > 0).length;
-    displayText =
-      countT > 0
-        ? `Avg: ${(totalHeartRateAggregated / countT).toFixed(0)}`
-        : "Avg: 0";
-  }
-
-  // --- Chart data ---
   const chartData = {
-    labels: processedData.map((item) => item.label),
+    labels: reportData.map((item) => item.label),
     datasets: [
       {
         label: "Heart Rate",
-        data: processedData.map((item) => item.value),
+        data: reportData.map((item) => item.value),
         backgroundColor: "rgba(26, 144, 65, 0.7)",
         borderColor: "rgba(26, 144, 65, 1)",
         borderWidth: 1,
@@ -221,7 +90,20 @@ const HeartRateReport = () => {
     ],
   };
 
-  // --- Chart options ---
+  const totalHRAggregated = reportData.reduce(
+    (sum, item) => sum + item.value,
+    0
+  );
+  // Računanje proseka u zavisnosti od perioda
+  let displayText = "";
+  const totalEntries = reportData.length; // Ukupan broj grupisanih unosa
+
+  const validEntries = reportData.filter((item) => item.value > 0).length; // Broj dana/grupa sa podacima
+  displayText =
+    validEntries > 0
+      ? `Avg: ${(totalHRAggregated / validEntries).toFixed(0)}`
+      : "Avg: 0";
+
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -260,6 +142,11 @@ const HeartRateReport = () => {
           text: "Heart Rate",
         },
         beginAtZero: true,
+      },
+    },
+    elements: {
+      line: {
+        fill: false, // Neće biti popunjen prostor ispod linije
       },
     },
   };

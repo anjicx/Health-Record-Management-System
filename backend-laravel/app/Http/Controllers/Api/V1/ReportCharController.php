@@ -18,7 +18,7 @@ class ReportCharController extends Controller
         $reportField = $request->query('field');//koristi query za calories/steps itd
 
         // Definišemo dozvoljene vrednosti za field
-        $allowedFields = ['steps', 'calories_burned', 'heart_rate'];//sql injection sprečen
+        $allowedFields = ['steps', 'calories_burned'];//sql injection sprečen
         if (!in_array($reportField, $allowedFields)) {//ako polje nije odavde greška da bude
             return response()->json(['error' => 'Invalid field'], 400);
         }
