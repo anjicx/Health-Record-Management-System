@@ -17,7 +17,7 @@ class ReportLineController extends Controller
         $reportField = $request->query('field');
 
         // Definišemo dozvoljene vrednosti za field
-        $allowedFields = ['steps', 'calories_burned', 'heart_rate'];//sql injection sprečen
+        $allowedFields = ['steps', 'sleep_quality', 'heart_rate'];//sql injection sprečen
         if (!in_array($reportField, $allowedFields)) {
             return response()->json(['error' => 'Invalid field'], 400);
         }

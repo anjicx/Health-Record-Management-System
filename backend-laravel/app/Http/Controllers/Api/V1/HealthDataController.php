@@ -70,42 +70,5 @@ class HealthDataController extends Controller
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
-    public function index()
-    {
-        //
-    }
 
-
-    public function create()
-    {
-        //
-    }
-
-    public function store(Request $request)
-    {
-        //
-    }
-
-
-    public function show(HealthData $healthData)
-    {
-        //
-    }
-
-    public function edit(HealthData $healthData)
-    {
-        //
-    }
-
-
-    public function update(Request $request, HealthData $healthData)
-    {
-        //
-    }
-
-
-    public function destroy(HealthData $healthData)
-    {
-        //
-    }
 }
