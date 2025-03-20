@@ -83,9 +83,14 @@ const HeartRateReport = () => {
       {
         label: "Heart Rate",
         data: reportData.map((item) => (item.value > 0 ? item.value : null)),
-        backgroundColor: "rgba(26, 144, 65, 0.7)",
-        borderColor: "rgba(26, 144, 65, 1)",
+        backgroundColor: "rgba(26, 144, 65, 0.2)",
+        borderColor: reportData.map((item) =>
+          item.value > 100 ? "red" : item.value < 60 ? "blue" : "green"
+        ), // Crveno za visoke vrednosti, plavo za niske
         borderWidth: 1,
+        pointRadius: 4,
+        tension: 0.4, //  glatka linija-bez špiceva
+        fill: true, // Omogućava popunjavanje ispod linije
       },
     ],
   };
@@ -141,7 +146,9 @@ const HeartRateReport = () => {
           display: true,
           text: "Heart Rate",
         },
-        beginAtZero: true,
+        beginAtZero: false,
+        suggestedMin: 40,
+        suggestedMax: 120,
       },
     },
     elements: {
