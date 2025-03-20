@@ -82,7 +82,7 @@ const HeartRateReport = () => {
     datasets: [
       {
         label: "Heart Rate",
-        data: reportData.map((item) => item.value),
+        data: reportData.map((item) => (item.value > 0 ? item.value : null)),
         backgroundColor: "rgba(26, 144, 65, 0.7)",
         borderColor: "rgba(26, 144, 65, 1)",
         borderWidth: 1,
