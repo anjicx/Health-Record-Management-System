@@ -38,9 +38,9 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('
 //korisnik mora biti vec prijavljen  da bi ovo se koristilo:
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::get('/user', function (Request $request) {
-        return new UserResource($request->user());//podaci o korisniku
-    });
+    //  Route::get('/user', function (Request $request) {
+    //    return new UserResource($request->user());//podaci o korisniku
+    //});
     //ostale rute koje yahtevaju autent
     Route::get('/devices/random', [DeviceController::class, 'getRandomDevices']);
     Route::post('/logout', [AuthController::class, 'logout']);//odjava  
