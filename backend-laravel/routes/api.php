@@ -4,7 +4,8 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\DeviceController;
 use App\Http\Controllers\Api\V1\HealthDataController;
-use App\Http\Controllers\Api\V1\ReportController;
+use App\Http\Controllers\Api\V1\ReportCharController;
+use App\Http\Controllers\Api\V1\ReportLineController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Resources\V1\UserResource;
 use Illuminate\Http\Request;
@@ -45,8 +46,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/generate-health-data', [HealthDataController::class, 'generateHealthData']);
     //za generisanje podataka healthdata od kojih se izveštaji onda prave
     Route::get('/dashboard', [DashboardController::class, 'getDailySummary']);
-    Route::get('/activityreport', action: [ReportController::class, 'getReport']);
-    Route::get('/caloriesreport', action: [ReportController::class, 'getReport']);
+    Route::get('/activityreport', action: [ReportCharController::class, 'getReport']);
+    Route::get('/caloriesreport', action: [ReportCharController::class, 'getReport']);
+    Route::get('/heartratereport', action: [ReportLineController::class, 'getReport']);
+
 
 
 

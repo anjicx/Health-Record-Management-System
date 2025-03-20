@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import ConnectDevice from "./pages/ConnectDevice";
 import ActivityReport from "./pages/ActivityReport";
 import CaloriesReport from "./pages/CaloriesReport";
+import HeartRateReport from "./pages/HeartRateReport";
 
 function App() {
   return (
@@ -40,6 +41,8 @@ return (
         <Route path="/device" element={<ConnectDevice />} />
         <Route path="/activityreport" element={<ActivityReport />} />
         <Route path="/caloriesreport" element={<CaloriesReport />} />
+        <Route path="/heartratereport" element={<HeartRateReport />} />
+
 
 
       </Routes>

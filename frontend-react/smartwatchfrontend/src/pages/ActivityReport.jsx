@@ -39,7 +39,7 @@ const ActivityReport = () => {
       if (!token) throw new Error("Token is not available");
 
       const response = await axios.get(
-        //odabrani datum,period se šalje kao parametri
+        //odabrani datum,period se šalje kao parametri i grupisanje po periodu na back
         `http://localhost:8000/api/activityreport?period=${period}&startDate=${startDate}&field=steps`,
         {
           headers: {
@@ -49,7 +49,7 @@ const ActivityReport = () => {
           },
         }
       );
-      //ako je uspešno prošla autorizacija odgovor dobijeni su podaci od backenda i nema greške
+      //ako je uspešno prošla autorizacija odgovor dobijeni su grupisani podaci od backenda i nema greške
       setReportData(response.data);
       setError(null);
     } catch (err) {
@@ -86,102 +86,12 @@ const ActivityReport = () => {
         : dayjs(prev).add(1, "month").format("YYYY-MM-DD")
     );
   };
-  //5.DOBIJANJE SUMIRANIH PODATAKA NA STUBIĆU
-  //grupisanje npr. od 23:00 do 23:59 je na jednom stubiću
-  function groupDataDay(data) {
-    // Kreiramo prazan objekat za sumiranje podataka
-    const groupedData = {};
-
-    // Prolazimo kroz svaki podatak i sumiramo korake po satu
-    data.forEach((item) => {
-      //pretvaramo sate u ms da bi onda u utc,sa getutchours fjom izbegavamo greške sa offsetom-rešilo problme 00h
-      const hour = new Date(item.timestamp * 1000).getUTCHours();
-      const hourLabel = `${String(hour).padStart(2, "0")}h`; //sati dvocifr br npr 01h
-
-      //ako nema ključ vrednost inicijalizuje se na 0
-      if (!groupedData[hourLabel]) {
-        groupedData[hourLabel] = 0;
-      }
-      //na to se dodaje vrednost koraka iz item.steps
-      groupedData[hourLabel] += item.value;
-    });
-
-    // Kreiramo niz svih sati (0h do 23h)
-    const allHours = [];
-    for (let i = 0; i < 24; i++) {
-      allHours.push(`${String(i).padStart(2, "0")}h`);
-    }
-
-    // Za svaki sat, ako nema podatka, postavljamo vrednost 0
-    //ključ vrrednost sat,broj koraka
-    return allHours.map((hourLabel) => ({
-      label: hourLabel,
-      value: groupedData[hourLabel] || 0,
-    }));
-  }
-  function groupDataWeek(data) {
-    const groupedData = {};
-    const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]; // Ponedeljak prvi
-    const startOfWeek = dayjs(startDate).startOf("week").add(1, "day");
-
-    data.forEach((item) => {
-      const dayIndex = new Date(item.timestamp * 1000).getUTCDay(); // Vraća 0 (Nedelja) do 6 (Subota)
-      const correctedIndex = (dayIndex + 6) % 7; // Pomera Nedelju (0) na kraj
-      const dayLabel = daysOfWeek[correctedIndex]; // Mapira u novi poredak-grafikon treba da počne od ponedeljka
-
-      if (!groupedData[dayLabel]) groupedData[dayLabel] = 0; //ako ne postoji podataka postavi na 0 inicijalno
-      groupedData[dayLabel] += item.value; //ako postoji dodaj
-    });
-
-    return daysOfWeek.map((dayLabel, index) => ({
-      label: `${dayLabel} (${startOfWeek.add(index, "day").format("DD.MM.")})`, // Formatirano npr. "Mon (11.03.)"
-      value: groupedData[dayLabel] || 0,
-    }));
-  }
-  function groupDataMonth(data, startDate) {
-    const groupedData = {};
-    // Odredi početak meseca na osnovu startDate
-    const startOfMonth = dayjs(startDate).startOf("month");
-    // broj dana u mesecu na osnovu meseca fja
-    const daysInMonth = startOfMonth.daysInMonth();
-
-    // Inicijalizuj podatke svakog dana (1 do daysInMonth) na 0
-    for (let day = 1; day <= daysInMonth; day++) {
-      groupedData[day] = 0;
-    }
-
-    // Prođi kroz sve podatke (koji dolaze na svakih 1h)
-    data.forEach((item) => {
-      //dani u mesecu
-      const dayNumber = new Date(item.timestamp * 1000).getUTCDate();
-      if (dayNumber >= 1 && dayNumber <= daysInMonth) {
-        groupedData[dayNumber] += item.value; // Saberi korake za taj dan
-      }
-    });
-    // Kreiraj niz objekata sa labelom (dan i datum) i sumiranim koracima
-    return Array.from({ length: daysInMonth }, (_, i) => {
-      const day = i + 1; // Dan u mesecu (1-indexed)
-      return {
-        label: ` ${startOfMonth.add(i, "day").format("DD.MM.")}`,
-        value: groupedData[day] || 0,
-      };
-    });
-  }
-
-  //data koja se šalje za grafikon
-  const processedData =
-    period === "week"
-      ? groupDataWeek(reportData) //za sedmicu
-      : period === "month"
-      ? groupDataMonth(reportData, startDate) //  za mesec
-      : groupDataDay(reportData); //za dan
-
   const chartData = {
-    labels: processedData.map((item) => item.label), //!!ISPIS NA X OSI
+    labels: reportData.map((item) => item.label), //!!ISPIS NA X OSI
     datasets: [
       {
         label: "steps",
-        data: processedData.map((item) => item.value),
+        data: reportData.map((item) => item.value),
         backgroundColor: "rgba(26, 144, 65, 0.7)",
         borderColor: "rgba(26, 144, 65, 1)",
         borderWidth: 1,
@@ -189,24 +99,21 @@ const ActivityReport = () => {
     ],
   };
 
-  let totalStepsAggregated = 0;
-  processedData.forEach((item) => {
-    // računa za period ukupan broj koraka
-    totalStepsAggregated += Number(item.value); // Konvertuje u broj da ne bude string negde PROBLEM ISPISA !!
-  });
-
+  const totalStepsAggregated = reportData.reduce(
+    (sum, item) => sum + item.value,
+    0
+  );
   // Računanje proseka u zavisnosti od perioda
   let displayText = "";
+  const totalEntries = reportData.length; // Ukupan broj grupisanih unosa
+
   if (period === "day") {
     displayText = "Sum: " + totalStepsAggregated;
-  } else if (period === "week") {
-    displayText = `Avg: ${(totalStepsAggregated / 7).toFixed(0)}`;
-  } else if (period === "month") {
-    const countDays = processedData.filter((item) => item.value > 0).length; //broj dana gde je br kor>0
-    // Ako postoje dani sa podacima, računa se prosečna vrednost, u suprotnom 0
+  } else if (period === "week" || period === "month") {
+    const validEntries = reportData.filter((item) => item.value > 0).length; // Broj dana/grupa sa podacima
     displayText =
-      countDays > 0
-        ? `Avg: ${(totalStepsAggregated / countDays).toFixed(0)}`
+      validEntries > 0
+        ? `Avg: ${(totalStepsAggregated / validEntries).toFixed(0)}`
         : "Avg: 0";
   }
 

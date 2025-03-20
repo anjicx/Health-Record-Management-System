@@ -70,87 +70,13 @@ const CaloriesReport = () => {
         : dayjs(prev).add(1, "month").format("YYYY-MM-DD")
     );
   };
-  function groupDataDay(data) {
-    const groupedData = {};
-
-    data.forEach((item) => {
-      const hour = new Date(item.timestamp * 1000).getUTCHours();
-      const hourLabel = `${String(hour).padStart(2, "0")}h`;
-
-      if (!groupedData[hourLabel]) {
-        groupedData[hourLabel] = 0;
-      }
-      groupedData[hourLabel] += item.value;
-    });
-
-    const allHours = [];
-    for (let i = 0; i < 24; i++) {
-      allHours.push(`${String(i).padStart(2, "0")}h`);
-    }
-
-    return allHours.map((hourLabel) => ({
-      label: hourLabel,
-      value: groupedData[hourLabel] || 0,
-    }));
-  }
-  function groupDataWeek(data) {
-    const groupedData = {};
-    const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]; // Ponedeljak prvi
-    const startOfWeek = dayjs(startDate).startOf("week").add(1, "day");
-
-    data.forEach((item) => {
-      const dayIndex = new Date(item.timestamp * 1000).getUTCDay();
-      const correctedIndex = (dayIndex + 6) % 7;
-      const dayLabel = daysOfWeek[correctedIndex];
-
-      if (!groupedData[dayLabel]) groupedData[dayLabel] = 0;
-      groupedData[dayLabel] += item.value;
-    });
-
-    return daysOfWeek.map((dayLabel, index) => ({
-      label: `${dayLabel} (${startOfWeek.add(index, "day").format("DD.MM.")})`,
-      value: groupedData[dayLabel] || 0,
-    }));
-  }
-  function groupDataMonth(data, startDate) {
-    const groupedData = {};
-    const startOfMonth = dayjs(startDate).startOf("month");
-    const daysInMonth = startOfMonth.daysInMonth();
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      groupedData[day] = 0;
-    }
-
-    data.forEach((item) => {
-      //dani u mesecu
-      const dayNumber = new Date(item.timestamp * 1000).getUTCDate();
-      if (dayNumber >= 1 && dayNumber <= daysInMonth) {
-        groupedData[dayNumber] += item.value;
-      }
-    });
-    return Array.from({ length: daysInMonth }, (_, i) => {
-      const day = i + 1;
-      return {
-        label: ` ${startOfMonth.add(i, "day").format("DD.MM.")}`,
-        value: groupedData[day] || 0,
-      };
-    });
-  }
-
-  //data koja se šalje za grafikon
-  const processedData =
-    period === "week"
-      ? groupDataWeek(reportData) //za sedmicu
-      : period === "month"
-      ? groupDataMonth(reportData, startDate) //  za mesec
-      : groupDataDay(reportData); //za dan
 
   const chartData = {
-    labels: processedData.map((item) => item.label), //!!ISPIS NA X OSI
+    labels: reportData.map((item) => item.label), //!!ISPIS NA X OSI
     datasets: [
       {
         label: "calories",
-        data: processedData.map((item) => item.value),
+        data: reportData.map((item) => item.value),
         backgroundColor: "rgba(26, 144, 65, 0.7)",
         borderColor: "rgba(26, 144, 65, 1)",
         borderWidth: 1,
@@ -158,24 +84,24 @@ const CaloriesReport = () => {
     ],
   };
   //OVDE
-  let totalCaloriesAggregated = 0;
-  processedData.forEach((item) => {
-    // računa za period ukupan broj koraka
-    totalCaloriesAggregated += Number(item.value); // Konvertuje u broj da ne bude string negde PROBLEM ISPISA !!
-  });
 
+  const totalCaloriesAggregated = reportData.reduce(
+    (sum, item) => sum + item.value,
+    0
+  );
   // Računanje proseka u zavisnosti od perioda
   let displayText = "";
+  const totalEntries = reportData.length; // Ukupan broj grupisanih unosa
+
   if (period === "day") {
-    displayText = "Sum: " + totalCaloriesAggregated;
-  } else if (period === "week") {
-    displayText = `Avg: ${(totalCaloriesAggregated / 7).toFixed(0)}`;
-  } else if (period === "month") {
-    const countDays = processedData.filter((item) => item.value > 0).length; //broj dana gde je br kor>0
-    // Ako postoje dani sa podacima, računa se prosečna vrednost, u suprotnom 0
+    displayText = "Sum: " + totalCaloriesAggregated.toFixed(0);
+    //RAČUNA NA OSNOVU PODATAKA KOJE IMA
+    //da ne računa npr na 7dana a samo 3 dana sedmice su prošla
+  } else if (period === "week" || period === "month") {
+    const validEntries = reportData.filter((item) => item.value > 0).length; // Broj dana/grupa sa podacima
     displayText =
-      countDays > 0
-        ? `Avg: ${(totalCaloriesAggregated / countDays).toFixed(0)}`
+      validEntries > 0
+        ? `Avg: ${(totalCaloriesAggregated / validEntries).toFixed(0)}`
         : "Avg: 0";
   }
 

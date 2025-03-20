@@ -110,7 +110,10 @@ function Dashboard() {
         <p>{data.calories} kcal</p>
       </div>
 
-      <div className="info-card">
+      <div
+        className="info-card"
+        onClick={() => handleCardClick("heartratereport")}
+      >
         <i className="fas fa-heartbeat fa-3x text-danger"></i>
         <h4>Heart Rate</h4>
         <p>{data.heart_rate} bpm</p>
