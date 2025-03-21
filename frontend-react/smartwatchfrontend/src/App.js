@@ -11,6 +11,9 @@ import ConnectDevice from "./pages/ConnectDevice";
 import ActivityReport from "./pages/ActivityReport";
 import CaloriesReport from "./pages/CaloriesReport";
 import HeartRateReport from "./pages/HeartRateReport";
+import SleepQualityReport from "./pages/SleepQualityReport";
+import Profile from "./pages/Profile";
+
 
 function App() {
   return (
@@ -42,6 +45,9 @@ return (
         <Route path="/activityreport" element={<ActivityReport />} />
         <Route path="/caloriesreport" element={<CaloriesReport />} />
         <Route path="/heartratereport" element={<HeartRateReport />} />
+        <Route path="/sleepqreport" element={<SleepQualityReport />} />
+        <Route path="/user" element={<Profile />} />
+
 
 
 

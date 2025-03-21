@@ -51,7 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/caloriesreport', action: [ReportCharController::class, 'getReport']);
     Route::get('/heartratereport', action: [ReportLineController::class, 'getReport']);
     Route::get('/sleepqreport', action: [ReportLineController::class, 'getReport']);
-    Route::get('/profile', action: [ProfileController::class, 'getReport']);
+    Route::get('/user', action: [ProfileController::class, 'getUserProfile']);
 
 
 

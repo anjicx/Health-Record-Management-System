@@ -7,6 +7,19 @@ use Illuminate\Http\Request;
 class ProfileController extends Controller
 {
 
+    public function getUserProfile(Request $request)
+    {
+        $user = auth()->user(); // Dobijamo trenutno ulogovanog korisnika
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        // Učitavamo usera zajedno sa njegovim profilom (ako postoji)
+        $user->load('profile');
+
+        return response()->json($user);
+    }
 
 
     public function create()

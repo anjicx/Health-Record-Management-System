@@ -25,10 +25,7 @@ function NavBar() {
           <p>DEVICE</p>
         </Link>
 
-        <Link
-          className="nav-link text-white text-center small-link"
-          to="/profile"
-        >
+        <Link className="nav-link text-white text-center small-link" to="/user">
           <i className="fas fa-user fa-lg"></i> {/* Profile ikona */}
           <p>PROFILE</p>
         </Link>
