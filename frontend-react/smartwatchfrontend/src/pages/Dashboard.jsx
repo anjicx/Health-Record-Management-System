@@ -128,7 +128,7 @@ function Dashboard() {
         <p>{getSleepQuality(data.sleep)}</p>
       </div>
 
-      <div className="info-card">
+      <div className="info-card" onClick={() => handleCardClick("stresslevel")}>
         <i className="fas fa-brain fa-3x text-warning"></i>
         <h4>Stress level</h4>
         <p>{getStressLevel(data.stress)}</p>

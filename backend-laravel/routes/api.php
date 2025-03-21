@@ -52,6 +52,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/heartratereport', action: [ReportLineController::class, 'getReport']);
     Route::get('/sleepqreport', action: [ReportLineController::class, 'getReport']);
     Route::get('/user', action: [ProfileController::class, 'getUserProfile']);
+    Route::get('/stresslevel', action: [ReportLineController::class, 'getReport']);
+
+
 
 
 
