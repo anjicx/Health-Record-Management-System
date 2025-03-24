@@ -18,6 +18,9 @@ function ForgotPassword() {
         { email }
       );
       setMessage(response.data.message);
+      setTimeout(() => {
+        setMessage("");
+      }, 5000); // Poruka da se duže zadrži!
     } catch (err) {
       if (err.response?.status === 400) {
         setError(
