@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../style/login.css"; // Koristimo isti CSS stil
+import "../style/login.css"; // Koristimo isti CSS stil forme
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +12,7 @@ const Register = () => {
   });
 
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState(""); // za prikaz uspešne registracije
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -25,14 +26,16 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
-
+    setSuccessMessage(""); // Resetujemo prethodnu poruku
     try {
       const response = await axios.post(
         "http://127.0.0.1:8000/api/register",
         formData
       );
-      console.log("Registration successful:", response.data);
-      navigate("/dashboard"); // Preusmeravanje nakon uspešne registracije
+      setSuccessMessage("Successful registration! Redirecting..."); // Postavljamo poruku
+      setTimeout(() => {
+        navigate("/dashboard"); // Preusmeravanje na glavnu stranicu
+      }, 2000); // 2 sekunde preusmerenje da ne bude odmah
     } catch (error) {
       console.error(
         "Registration error:",
@@ -51,6 +54,12 @@ const Register = () => {
       <div className="login-card">
         {errorMessage && (
           <div className="alert alert-danger text-center">{errorMessage}</div>
+        )}
+
+        {successMessage && ( //ovde dodajemo
+          <div className="alert alert-success text-center">
+            {successMessage}
+          </div>
         )}
 
         <form onSubmit={handleSubmit}>
