@@ -14,7 +14,7 @@ const Login = () => {
     const interval = setInterval(() => {
       const randomIndex = Math.floor(Math.random() * quotes.length);
       setQuote(quotes[randomIndex]);
-    }, 3000); // Menja citat na svakih pola sata
+    }, 3000); // Menja citat na svakih 3s
     return () => clearInterval(interval); // Čisti interval kada se komponenta makne s ekrana
   }, []);
 
@@ -26,6 +26,7 @@ const Login = () => {
   });
 
   const [errorMessage, setErrorMessage] = useState(""); // čuva greške dobijene od backend-a
+  const [successMessage, setSuccessMessage] = useState(""); // za prikaz uspešne prijave
 
   const navigate = useNavigate(); //funkcija za preusmeravanje na drugu stranicu
 
@@ -46,6 +47,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault(); /*sprečava da se stranica reloaduje */
     setErrorMessage(""); // briše primljene prethodne greške pre nego uradi pošalje ponovo pod
+    setSuccessMessage(""); // Resetujemo prethodnu poruku
 
     try {
       const response = await axios.post(
@@ -55,15 +57,12 @@ const Login = () => {
         "http://127.0.0.1:8000/api/login" /*ruta na koju šalje */,
         formData /*uneti podaci koje šalje */
       );
-      console.log(
-        "Login successful:",
-        response.data
-      ); /*kada je odgovor servera primljen dostupan je response->data */
-      localStorage.setItem("token", response.data.token); // Čuva token u localStorage!!!
 
-      navigate(
-        "/dashboard"
-      ); /*preusmerava na novu stranicu nakon uspešne prijave */
+      setSuccessMessage("Successful login! Redirecting..."); // Postavljamo poruku
+      setTimeout(() => {
+        navigate("/dashboard"); // Preusmeravanje na glavnu stranicu
+      }, 2000); // 2 sekunde preusmerenje da ne bude odmah
+      localStorage.setItem("token", response.data.token); // Čuva token u localStorage!!!
     } catch (error) {
       /*ako se desi greška hvata je i ispisuje od servera dobijeni razlog greške. */
       console.error("Login error:", error.response?.data || error.message);
@@ -92,7 +91,11 @@ const Login = () => {
         {errorMessage && (
           <div className="alert alert-danger text-center">{errorMessage}</div>
         )}
-        {/*prikaz kada je greška */}
+        {successMessage && (
+          <div className="alert alert-success text-center">
+            {successMessage}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

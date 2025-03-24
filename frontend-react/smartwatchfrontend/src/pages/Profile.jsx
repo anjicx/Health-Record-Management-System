@@ -22,6 +22,8 @@ function HeartModel() {
 
 export default function Profile() {
   const [user, setUser] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   // Učitavanje korisničkih podataka
   useEffect(() => {
@@ -42,8 +44,17 @@ export default function Profile() {
 
   // Funkcija za logout
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Uklanja token iz localStorage
-    window.location.href = "/"; // Preusmerava korisnika na login stranicu
+    try {
+      //throw new Error("Test error"); // za simulaciju greške
+      localStorage.removeItem("token"); // Uklanja token iz localStorage
+      setSuccessMessage("Logout successfull"); // Resetujemo prethodnu poruku
+      setTimeout(() => {
+        window.location.href = "/"; // Preusmerava korisnika na login stranicu nakon 2 sekunde
+      }, 2000);
+    } catch (error) {
+      setErrorMessage("An error occurred while logging out. Please try again."); //ispis greške
+      setSuccessMessage(""); // Resetuj poruku o uspehu
+    }
   };
 
   return (
@@ -64,6 +75,16 @@ export default function Profile() {
       <div className="card shadow-lg p-4 mt-3" style={{ maxWidth: "400px" }}>
         <div className="card-body">
           <h1 className="card-title text-center mb-4">Health Profile</h1>
+          {/* Poruke o odjavi */}
+          {successMessage && (
+            <div className="alert alert-success text-center">
+              {successMessage}
+            </div>
+          )}
+          {errorMessage && (
+            <div className="alert alert-danger text-center">{errorMessage}</div>
+          )}
+
           <div className="mb-3">
             <label className="form-label">Name</label>
             <input
