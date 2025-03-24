@@ -36,6 +36,7 @@ const Register = () => {
       setTimeout(() => {
         navigate("/dashboard"); // Preusmeravanje na glavnu stranicu
       }, 2000); // 2 sekunde preusmerenje da ne bude odmah
+      localStorage.setItem("token", response.data.token); // Čuva token u localStorage!!!
     } catch (error) {
       console.error(
         "Registration error:",
