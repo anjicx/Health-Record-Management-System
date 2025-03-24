@@ -19,9 +19,15 @@ function ForgotPassword() {
       );
       setMessage(response.data.message);
     } catch (err) {
-      setError(
-        err.response?.data?.message || "An error occurred. Please try again."
-      );
+      if (err.response?.status === 400) {
+        setError(
+          "Unable to send email with reset link. Please try again later."
+        );
+      } else {
+        setError(
+          err.response?.data?.message || "An error occurred. Please try again."
+        );
+      }
     }
   };
 

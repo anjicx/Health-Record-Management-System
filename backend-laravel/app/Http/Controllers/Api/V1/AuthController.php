@@ -89,6 +89,7 @@ class AuthController extends Controller
     }
 
     //generisanje linka koji preusmerava na formu i slanje na mejl
+    //isklj avast 
     public function sendPasswordResetLink(Request $request)
     {
         $request->validate([
