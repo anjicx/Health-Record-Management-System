@@ -134,7 +134,7 @@ function Dashboard() {
         <p>{getStressLevel(data.stress)}</p>
       </div>
 
-      <div className="info-card">
+      <div className="info-card" onClick={() => handleCardClick("bloodp")}>
         <i className="fas fa-tint fa-3x text-primary"></i>
         <h4>Blood Pressure</h4>
         <p>

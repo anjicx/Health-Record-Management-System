@@ -14,6 +14,7 @@ import HeartRateReport from "./pages/HeartRateReport";
 import SleepQualityReport from "./pages/SleepQualityReport";
 import Profile from "./pages/Profile";
 import StressLevel from "./pages/StressLevel";
+import BloodPReport from "./pages/BloodPReport";
 
 
 function App() {
@@ -49,6 +50,8 @@ return (
         <Route path="/sleepqreport" element={<SleepQualityReport />} />
         <Route path="/user" element={<Profile />} />
         <Route path="/stresslevel" element={<StressLevel />} />
+        <Route path="/bloodp" element={<BloodPReport />} />
+
 
 
 

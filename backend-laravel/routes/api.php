@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\BloodPressureController;
 use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\DeviceController;
 use App\Http\Controllers\Api\V1\HealthDataController;
@@ -53,6 +54,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/sleepqreport', action: [ReportLineController::class, 'getReport']);
     Route::get('/user', action: [ProfileController::class, 'getUserProfile']);
     Route::get('/stresslevel', action: [ReportLineController::class, 'getReport']);
+    Route::get('/bloodp', action: [BloodPressureController::class, 'getReport']);
+
 
 
 
