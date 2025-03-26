@@ -23,8 +23,6 @@ class ProfileController extends Controller
 
     }
 
-
-
     public function update(Request $request)
     {
         // \Log::info('PATCH /api/user data:', $request->all()); // ulazni podaci
