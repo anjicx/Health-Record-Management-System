@@ -25,19 +25,19 @@ class ProfileController extends Controller
 
     public function update(Request $request)
     {
-        // \Log::info('PATCH /api/user data:', $request->all()); // ulazni podaci
+        \Log::info('PATCH /api/user data:', $request->all()); // ulazni podaci
 
         $user = auth()->user(); // Autentifikovan korisnik
         if (!$user) {
-            return response()->json(['message' => 'User not found.'], 404);
+            return response()->json(['message' => 'User not found or token is invalid.'], 401);
         }
 
         $validatedProfileData = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'surname' => 'sometimes|string|max:255',
-            'age' => 'sometimes|integer',
-            'weight' => 'sometimes|numeric',
-            'height' => 'sometimes|numeric',
+            'name' => 'sometimes|string|nullable|max:255',
+            'surname' => 'sometimes|string|nullable|max:255',
+            'age' => 'sometimes|nullable|integer',
+            'weight' => 'sometimes|nullable|numeric',
+            'height' => 'sometimes|nullable|numeric',
         ]);
 
         // Ako nema podataka za update

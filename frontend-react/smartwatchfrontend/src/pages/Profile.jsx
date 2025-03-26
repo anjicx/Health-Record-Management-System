@@ -38,6 +38,7 @@ export default function Profile() {
     fetch("http://localhost:8000/api/user", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
       },
     })
       .then((res) => res.json())
@@ -61,28 +62,36 @@ export default function Profile() {
   // Funkcija za izmenu
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target; //ime polja i vr
     setProfileData((prevData) => ({
+      //stara vr+izmenjena
       ...prevData,
       [name]: value,
     }));
   };
   const handleSaveChanges = () => {
-    const requestData = { ...profileData }; // Kopiramo profileData BEZ username-a
-
-    //console.log("Slanje podataka na backend:", requestData); // Provera podataka
+    const requestData = { ...profileData };
+    // Pretvori prazne stringove u null
+    Object.keys(requestData).forEach((key) => {
+      if (requestData[key] === "") {
+        requestData[key] = null;
+      }
+    });
+    console.log("Slanje podataka na backend:", requestData); // Provera podataka
 
     fetch("http://localhost:8000/api/user", {
       method: "PATCH", // patch stavljen jer ne mora svaki deo da se menja(npr samo surname izmeniš)
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
+
         "Content-Type": "application/json",
+        Accept: "application/json",
       },
-      body: JSON.stringify(requestData),
+      body: JSON.stringify(requestData), //da od obj napravi json
     })
       .then(async (res) => {
         const data = await res.json();
-        //  console.log("Backend odgovor:", data); // backend vraća
+        console.log("Backend odgovor:", JSON.stringify(data, null, 2));
         if (!res.ok) {
           throw new Error(data.message || "Greška u zahtevu.");
         }
@@ -91,7 +100,7 @@ export default function Profile() {
         setIsEditing(false);
       })
       .catch((error) => {
-        //console.error("Greška pri slanju podataka:", error);
+        console.error("Greška pri slanju podataka:", error);
         setErrorMessage("Error updating profile. Please try again.");
       });
   };
