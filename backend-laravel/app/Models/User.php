@@ -44,12 +44,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    // Relacija jedan prema više sa izveštajima (Report)
-    public function reports()
-    {
-        return $this->hasMany(Report::class);
-    }
-
     // Relacija jedan prema više sa zdravstvenim podacima (HealthData)
     public function healthData()
     {
