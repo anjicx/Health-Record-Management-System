@@ -30,7 +30,6 @@ class HealthDataFactory extends Factory
             'heart_rate' => $this->faker->numberBetween(60, 100),
             'systolic_bp' => $this->faker->numberBetween(110, 140),
             'diastolic_bp' => $this->faker->numberBetween(70, 90),
-            'spo2' => $this->faker->numberBetween(90, 100),
             'steps' => $this->faker->numberBetween(0, 2000),//koraci na 1h
             'calories_burned' => function (array $attributes) {
                 return isset($attributes['steps']) ? round($attributes['steps'] * 0.04, 2) : 0;
