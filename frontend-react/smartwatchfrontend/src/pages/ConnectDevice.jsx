@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../style/device.css";
+import Swal from "sweetalert2";
 
 function ConnectDevice() {
   const [devices, setDevices] = useState([]); // Lista uređaja
@@ -22,12 +23,12 @@ function ConnectDevice() {
       setDevices(data);
       setSelectedDeviceId(null); // Resetuj izbor uređaja
     } catch (error) {
-      console.error("Error fetching devices:", error);
+      Swal.fire("Error", "Failed to scan devices.", "error");
     }
   };
   const handleSynchronize = async () => {
     if (!selectedDeviceId) {
-      alert("Please select a device first.");
+      Swal.fire("Warning", "Please select a device first.", "warning");
       return;
     }
 
@@ -51,10 +52,9 @@ function ConnectDevice() {
 
       const result = await response.json();
       localStorage.setItem("device_id", selectedDeviceId); //postavlja zbog izveštaja dalje
-      alert(result.message); // Prikaži poruku uspeha
+      Swal.fire("Success", result.message, "success");
     } catch (error) {
-      console.error("Error syncing data:", error);
-      alert("Failed to synchronize data.");
+      Swal.fire("Error", "Failed to synchronize data.", "error");
     }
   };
 
