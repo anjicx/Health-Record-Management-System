@@ -67,154 +67,154 @@ export default function Profile() {
       [name]: value,
     }));
   };
-}
-const handleSaveChanges = () => {
-  const requestData = { ...profileData }; // Kopiramo profileData BEZ username-a
+  const handleSaveChanges = () => {
+    const requestData = { ...profileData }; // Kopiramo profileData BEZ username-a
 
-  //console.log("Slanje podataka na backend:", requestData); // Provera podataka
+    //console.log("Slanje podataka na backend:", requestData); // Provera podataka
 
-  fetch("http://localhost:8000/api/user", {
-    method: "PATCH", // patch stavljen jer ne mora svaki deo da se menja(npr samo surname izmeniš)
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(requestData),
-  })
-    .then(async (res) => {
-      const data = await res.json();
-      //  console.log("Backend odgovor:", data); // backend vraća
-      if (!res.ok) {
-        throw new Error(data.message || "Greška u zahtevu.");
-      }
-      setProfileData(data.user.profile || {}); // Ažuriramo podatke
-      setSuccessMessage("Profile successfully updated!");
-      setIsEditing(false);
+    fetch("http://localhost:8000/api/user", {
+      method: "PATCH", // patch stavljen jer ne mora svaki deo da se menja(npr samo surname izmeniš)
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData),
     })
-    .catch((error) => {
-      //console.error("Greška pri slanju podataka:", error);
-      setErrorMessage("Error updating profile. Please try again.");
-    });
-};
+      .then(async (res) => {
+        const data = await res.json();
+        //  console.log("Backend odgovor:", data); // backend vraća
+        if (!res.ok) {
+          throw new Error(data.message || "Greška u zahtevu.");
+        }
+        setProfileData(data.user.profile || {}); // Ažuriramo podatke
+        setSuccessMessage("Profile successfully updated!");
+        setIsEditing(false);
+      })
+      .catch((error) => {
+        //console.error("Greška pri slanju podataka:", error);
+        setErrorMessage("Error updating profile. Please try again.");
+      });
+  };
 
-// Funkcija za logout
-const handleLogout = () => {
-  try {
-    //throw new Error("Test error"); // za simulaciju greške
-    localStorage.removeItem("token"); // Uklanja token iz localStorage
-    setSuccessMessage("Logout successfull"); // Resetujemo prethodnu poruku
-    setTimeout(() => {
-      window.location.href = "/"; // Preusmerava korisnika na login stranicu nakon 2 sekunde
-    }, 2000);
-  } catch (error) {
-    setErrorMessage("An error occurred while logging out. Please try again."); //ispis greške
-    setSuccessMessage(""); // Resetuj poruku o uspehu
-  }
-};
+  // Funkcija za logout
+  const handleLogout = () => {
+    try {
+      //throw new Error("Test error"); // za simulaciju greške
+      localStorage.removeItem("token"); // Uklanja token iz localStorage
+      setSuccessMessage("Logout successfull"); // Resetujemo prethodnu poruku
+      setTimeout(() => {
+        window.location.href = "/"; // Preusmerava korisnika na login stranicu nakon 2 sekunde
+      }, 2000);
+    } catch (error) {
+      setErrorMessage("An error occurred while logging out. Please try again."); //ispis greške
+      setSuccessMessage(""); // Resetuj poruku o uspehu
+    }
+  };
 
-return (
-  <div className="container d-flex flex-column align-items-center vh-100">
-    {/* Sekcija za 3D model -prostor koji zauzima*/}
-    <div style={{ width: "100%", height: "900px" }}>
-      <Canvas>
-        <Suspense fallback={null}>
-          <ambientLight intensity={0.5} />
-          <directionalLight position={[2, 2, 2]} />
-          <HeartModel />
-          <OrbitControls />
-        </Suspense>
-      </Canvas>
-    </div>
+  return (
+    <div className="container d-flex flex-column align-items-center vh-100">
+      {/* Sekcija za 3D model -prostor koji zauzima*/}
+      <div style={{ width: "100%", height: "900px" }}>
+        <Canvas>
+          <Suspense fallback={null}>
+            <ambientLight intensity={0.5} />
+            <directionalLight position={[2, 2, 2]} />
+            <HeartModel />
+            <OrbitControls />
+          </Suspense>
+        </Canvas>
+      </div>
 
-    {/* Sekcija za formu */}
-    <div className="card shadow-lg p-4 mt-3" style={{ maxWidth: "400px" }}>
-      <div className="card-body">
-        <h1 className="card-title text-center mb-4">Health Profile</h1>
-        {/* Poruke o odjavi */}
-        {successMessage && (
-          <div className="alert alert-success text-center">
-            {successMessage}
+      {/* Sekcija za formu */}
+      <div className="card shadow-lg p-4 mt-3" style={{ maxWidth: "400px" }}>
+        <div className="card-body">
+          <h1 className="card-title text-center mb-4">Health Profile</h1>
+          {/* Poruke o odjavi */}
+          {successMessage && (
+            <div className="alert alert-success text-center">
+              {successMessage}
+            </div>
+          )}
+          {errorMessage && (
+            <div className="alert alert-danger text-center">{errorMessage}</div>
+          )}
+
+          <div className="mb-3">
+            <label className="form-label">Name</label>
+            <input
+              type="text"
+              className="form-control"
+              value={profile.name || ""}
+              name="name"
+              onChange={handleInputChange}
+              readOnly={!isEditing}
+            />
           </div>
-        )}
-        {errorMessage && (
-          <div className="alert alert-danger text-center">{errorMessage}</div>
-        )}
-
-        <div className="mb-3">
-          <label className="form-label">Name</label>
-          <input
-            type="text"
-            className="form-control"
-            value={profile.name || ""}
-            name="name"
-            onChange={handleInputChange}
-            readOnly={!isEditing}
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Surname</label>
-          <input
-            type="text"
-            className="form-control"
-            name="surname"
-            value={profile.surname || ""}
-            onChange={handleInputChange}
-            readOnly={!isEditing}
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Age</label>
-          <input
-            type="text"
-            className="form-control"
-            name="age"
-            value={profile.age || ""}
-            onChange={handleInputChange}
-            readOnly={!isEditing}
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Height (cm)</label>
-          <input
-            type="text"
-            className="form-control"
-            name="height"
-            value={profile.height || ""}
-            onChange={handleInputChange}
-            readOnly={!isEditing}
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Weight (kg)</label>
-          <input
-            type="text"
-            className="form-control"
-            name="weight"
-            value={profile.weight || ""}
-            onChange={handleInputChange}
-            readOnly={!isEditing}
-          />
-        </div>
-        <button
-          onClick={handleEditClick}
-          className="btn btn-primary w-100 mt-3"
-        >
-          {isEditing ? "Cancel" : "Edit Profile"}
-        </button>
-
-        {isEditing && (
+          <div className="mb-3">
+            <label className="form-label">Surname</label>
+            <input
+              type="text"
+              className="form-control"
+              name="surname"
+              value={profile.surname || ""}
+              onChange={handleInputChange}
+              readOnly={!isEditing}
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Age</label>
+            <input
+              type="text"
+              className="form-control"
+              name="age"
+              value={profile.age || ""}
+              onChange={handleInputChange}
+              readOnly={!isEditing}
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Height (cm)</label>
+            <input
+              type="text"
+              className="form-control"
+              name="height"
+              value={profile.height || ""}
+              onChange={handleInputChange}
+              readOnly={!isEditing}
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Weight (kg)</label>
+            <input
+              type="text"
+              className="form-control"
+              name="weight"
+              value={profile.weight || ""}
+              onChange={handleInputChange}
+              readOnly={!isEditing}
+            />
+          </div>
           <button
-            onClick={handleSaveChanges}
-            className="btn btn-success w-100 mt-3"
+            onClick={handleEditClick}
+            className="btn btn-primary w-100 mt-3"
           >
-            Save Changes
+            {isEditing ? "Cancel" : "Edit Profile"}
           </button>
-        )}
-        {/* Log Out */}
-        <button onClick={handleLogout} className="btn btn-danger w-100 mt-3">
-          Log Out
-        </button>
+
+          {isEditing && (
+            <button
+              onClick={handleSaveChanges}
+              className="btn btn-success w-100 mt-3"
+            >
+              Save Changes
+            </button>
+          )}
+          {/* Log Out */}
+          <button onClick={handleLogout} className="btn btn-danger w-100 mt-3">
+            Log Out
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+}
