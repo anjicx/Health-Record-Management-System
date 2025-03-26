@@ -19,43 +19,48 @@ class ProfileController extends Controller
         $user->load('profile');
 
         return response()->json($user);
+
+
     }
 
 
-    public function create()
+
+    public function update(Request $request)
     {
-        //
+        // \Log::info('PATCH /api/user data:', $request->all()); // ulazni podaci
+
+        $user = auth()->user(); // Autentifikovan korisnik
+        if (!$user) {
+            return response()->json(['message' => 'User not found.'], 404);
+        }
+
+        $validatedProfileData = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'surname' => 'sometimes|string|max:255',
+            'age' => 'sometimes|integer',
+            'weight' => 'sometimes|numeric',
+            'height' => 'sometimes|numeric',
+        ]);
+
+        // Ako nema podataka za update
+        if (empty($validatedProfileData)) {
+            return response()->json(['message' => 'No data provided for update.'], 400);
+        }
+
+        // Update ili kreiranje profile 
+        if (!empty($validatedProfileData)) {
+            if ($user->profile) {
+                $user->profile->update($validatedProfileData);
+            } else {
+                $user->profile()->create($validatedProfileData);
+            }
+        }
+
+        return response()->json([
+            'message' => 'Successfully updated profile.',
+            'user' => $user->load('profile') // Vraća korisnika sa ažuriranim profilom
+        ]);
     }
-
-    public function store(Request $request)
-    {
-        //
-    }
-
-
-    public function show(Profile $profile)
-    {
-        //
-    }
-
-    public function edit(Profile $profile)
-    {
-        //
-    }
-
-
-    public function update(Request $request, Profile $profile)
-    {
-        //
-    }
-
-
-    public function destroy(Profile $profile)
-    {
-        //
-    }
-
-
 
 
 

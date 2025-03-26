@@ -2,7 +2,7 @@ import { useEffect, useState, Suspense, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 
-// 3D model sa skaliranjem animacije
+// skaliranje animacije i 3d model
 function HeartModel() {
   const { scene } = useGLTF("/a.glb");
   const modelRef = useRef();
@@ -24,7 +24,15 @@ export default function Profile() {
   const [user, setUser] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-
+  const [isEditing, setIsEditing] = useState(false); //za edit mode praćenje
+  const [profileData, setProfileData] = useState({
+    //podaci korisnički praćenje
+    name: "",
+    surname: "",
+    age: "",
+    weight: "",
+    height: "",
+  });
   // Učitavanje korisničkih podataka
   useEffect(() => {
     fetch("http://localhost:8000/api/user", {
@@ -33,14 +41,69 @@ export default function Profile() {
       },
     })
       .then((res) => res.json())
-      .then((data) => setUser(data))
+      .then((data) => {
+        setUser(data);
+        setProfileData(data.profile || {});
+      })
       .catch((error) => console.error("Error fetching user data:", error));
   }, []);
 
   // Ako podaci nisu učitani
   if (!user) return <p className="text-center mt-5">Loading...</p>;
 
-  const profile = user.profile || {};
+  const profile = profileData;
+
+  // da li je editovanje uradjeno
+  const handleEditClick = () => {
+    setIsEditing((prev) => !prev); // Omogućava prebacivanje između edit i view moda
+  };
+
+  // Funkcija za izmenu
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (!name) return;
+
+    if (name === "username") {
+      setUser((prevUser) => ({
+        ...prevUser,
+        username: value,
+      }));
+    } else {
+      setProfileData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  };
+  const handleSaveChanges = () => {
+    const requestData = { ...profileData }; // Kopiramo profileData BEZ username-a
+
+    console.log("Slanje podataka na backend:", requestData); // Provera podataka
+
+    fetch("http://localhost:8000/api/user", {
+      method: "PATCH", // patch stavljen jer ne mora svaki deo da se menja(npr samo surname izmeniš)
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData),
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        console.log("Backend odgovor:", data); // Šta backend vraća
+        if (!res.ok) {
+          throw new Error(data.message || "Greška u zahtevu.");
+        }
+        setProfileData(data.user.profile || {}); // Ažuriramo podatke
+        setSuccessMessage("Profile successfully updated!");
+        setIsEditing(false);
+      })
+      .catch((error) => {
+        console.error("Greška pri slanju podataka:", error);
+        setErrorMessage("Error updating profile. Please try again.");
+      });
+  };
 
   // Funkcija za logout
   const handleLogout = () => {
@@ -91,7 +154,9 @@ export default function Profile() {
               type="text"
               className="form-control"
               value={profile.name || ""}
-              readOnly
+              name="name"
+              onChange={handleInputChange}
+              readOnly={!isEditing}
             />
           </div>
           <div className="mb-3">
@@ -99,17 +164,10 @@ export default function Profile() {
             <input
               type="text"
               className="form-control"
+              name="surname"
               value={profile.surname || ""}
-              readOnly
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">Username</label>
-            <input
-              type="text"
-              className="form-control"
-              value={user.username}
-              readOnly
+              onChange={handleInputChange}
+              readOnly={!isEditing}
             />
           </div>
           <div className="mb-3">
@@ -117,8 +175,10 @@ export default function Profile() {
             <input
               type="text"
               className="form-control"
+              name="age"
               value={profile.age || ""}
-              readOnly
+              onChange={handleInputChange}
+              readOnly={!isEditing}
             />
           </div>
           <div className="mb-3">
@@ -126,8 +186,10 @@ export default function Profile() {
             <input
               type="text"
               className="form-control"
+              name="height"
               value={profile.height || ""}
-              readOnly
+              onChange={handleInputChange}
+              readOnly={!isEditing}
             />
           </div>
           <div className="mb-3">
@@ -135,12 +197,27 @@ export default function Profile() {
             <input
               type="text"
               className="form-control"
+              name="weight"
               value={profile.weight || ""}
-              readOnly
+              onChange={handleInputChange}
+              readOnly={!isEditing}
             />
           </div>
-          <button className="btn btn-primary w-100 mt-3">Edit Profile</button>
+          <button
+            onClick={handleEditClick}
+            className="btn btn-primary w-100 mt-3"
+          >
+            {isEditing ? "Cancel" : "Edit Profile"}
+          </button>
 
+          {isEditing && (
+            <button
+              onClick={handleSaveChanges}
+              className="btn btn-success w-100 mt-3"
+            >
+              Save Changes
+            </button>
+          )}
           {/* Log Out */}
           <button onClick={handleLogout} className="btn btn-danger w-100 mt-3">
             Log Out
