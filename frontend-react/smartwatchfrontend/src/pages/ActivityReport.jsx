@@ -21,7 +21,7 @@ ChartJS.register(
   Legend
 );
 const ActivityReport = () => {
-  //1.KUPRAVLJANJE STANJEM UNUTAR FUNKCIONALNIH KOMPONENTI
+  //1.UPRAVLJANJE STANJEM UNUTAR FUNKCIONALNIH KOMPONENTI
   //setReportData fja da postavi data izveštaja-podatke dobijaš od backenda,default prazan niz
   const [reportData, setReportData] = useState([]);
   //postavi dan da je default za period-bira na frontu korisnik

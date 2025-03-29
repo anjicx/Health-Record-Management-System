@@ -71,7 +71,7 @@ export default function Profile() {
   };
   const handleSaveChanges = () => {
     const requestData = { ...profileData };
-    // Pretvori prazne stringove u null
+    // Pretvori prazne stringove u null!
     Object.keys(requestData).forEach((key) => {
       if (requestData[key] === "") {
         requestData[key] = null;
@@ -83,7 +83,6 @@ export default function Profile() {
       method: "PATCH", // patch stavljen jer ne mora svaki deo da se menja(npr samo surname izmeniš)
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
-
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -91,7 +90,7 @@ export default function Profile() {
     })
       .then(async (res) => {
         const data = await res.json();
-        console.log("Backend odgovor:", JSON.stringify(data, null, 2));
+        // console.log("Backend odgovor:", JSON.stringify(data, null, 2));
         if (!res.ok) {
           throw new Error(data.message || "Greška u zahtevu.");
         }

@@ -54,7 +54,6 @@ function Dashboard() {
         stress: "-",
         blood_pressure: { systolic: "-", diastolic: "-" },
       });
-      //OVO IZMENITI OBAV UI DA BUDE alert("Please synch your device.");
       setLoading(false);
       return;
     }
