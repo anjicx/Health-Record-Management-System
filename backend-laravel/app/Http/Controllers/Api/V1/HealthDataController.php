@@ -12,22 +12,18 @@ class HealthDataController extends Controller
     public function generateHealthData(Request $request)
     {
         try {
-
             $user = auth()->user(); // Trenutno ulogovani korisnik 
             if (!$user) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
-
             $validated = $request->validate([
                 'device_id' => 'required|integer|exists:device,id',
             ]);
-
             $device_id = $validated['device_id'];
             // Pronađi poslednji timestamp u bazi
             $lastTimestamp = HealthData::where('device_id', $device_id)
                 ->orderBy('timestamp', 'desc')
                 ->value('timestamp');
-
             if (!$lastTimestamp) {
                 // Ako nema podataka, kreće se unazad 150h- da bi onda se izgenerisalo 150 redova
                 $lastTimestamp = now()->subHours(150);
@@ -35,7 +31,6 @@ class HealthDataController extends Controller
                 // Pretvori u Carbon objekat
                 $lastTimestamp = \Carbon\Carbon::parse($lastTimestamp);
             }
-
             // Generiši podatke sve dok ne dostignemo sadašnji trenutak
             $recordsGenerated = 0;
             $currentTime = now();

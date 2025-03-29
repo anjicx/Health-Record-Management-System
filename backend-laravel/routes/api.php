@@ -52,7 +52,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/caloriesreport', action: [ReportCharController::class, 'getReport']);
     Route::get('/heartratereport', action: [ReportLineController::class, 'getReport']);
     Route::get('/sleepqreport', action: [ReportLineController::class, 'getReport']);
-    Route::get('/user', action: [ProfileController::class, 'getUserProfile']);
+    Route::get(uri: '/user', action: [ProfileController::class, 'getUserProfile']);
     Route::patch('/user', action: [ProfileController::class, 'update']);
     Route::get('/stresslevel', action: [ReportLineController::class, 'getReport']);
     Route::get('/bloodp', action: [BloodPressureController::class, 'getReport']);

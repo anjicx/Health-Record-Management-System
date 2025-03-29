@@ -21,6 +21,7 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+        //proveravanje osnovnih validacija pri registraciji
         $validator = Validator::make($request->all(), [
             'username' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:user',
@@ -44,10 +45,11 @@ class AuthController extends Controller
                 'errors' => $errors
             ], 422);
         }
+        //kreiranje korisnika
         $user = User::create([
             'username' => $request->username,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($request->password),//šifra se hashira pre čuvanja u bazi!
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -58,29 +60,32 @@ class AuthController extends Controller
             'token' => $token
         ], 201);
     }
+    //prijava korisnika
     public function login(Request $request)
     {
+        //pri prijavi se proveravaju email i šifra koji su obavezni pri unosu
+
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
-
+        //greška lošeg formata
         if ($validator->fails()) {
             return response()->json([
-                'message' => 'Validation failed.',
+                'message' => 'Validation failed.Email or password is in wrong format',
                 'errors' => $validator->errors()
             ], 422);
         }
-
+        //ne postoji u bazi greška
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
                 'message' => 'Invalid login credentials.'
             ], 401);
         }
-
+        //dobijanje korisnika i kreiranje token-a za prijavu
         $user = Auth::user();
         $token = $user->createToken('auth_token')->plainTextToken;
-
+        //šalje se ulogovani korisnik i token
         return response()->json([
             'message' => 'User logged in successfully.',
             'user' => new UserResource($user),
@@ -91,13 +96,13 @@ class AuthController extends Controller
     //generisanje linka koji preusmerava na formu i slanje na mejl
     //isklj avast 
     public function sendPasswordResetLink(Request $request)
-    {
+    {// validacija da li ima u bazi i da li je u formatu emaila
         $request->validate([
-            'email' => 'required|email|exists:user,email', // da l ima u bazi i da li je u formatu emaila
+            'email' => 'required|email|exists:user,email',
         ]);
-
+        //pronađi korisnika sa datim mejlom
         $user = User::where('email', $request->email)->first();
-
+        //greška-nema mejla u bazi
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
         }
@@ -156,7 +161,7 @@ class AuthController extends Controller
     }
 
 
-
+    //odjava korisnika-briše se token koji je vezan za sesiju korisnika
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();

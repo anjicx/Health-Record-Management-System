@@ -18,12 +18,12 @@ class HealthDataFactory extends Factory
      */
     protected $model = HealthData::class;
 
-    //ovo se generišu podaci svi sem id-eva fk jer oni će biti odabrani
+    //svi podaci modela HealthData osim stranih ključeva se generiš(strani ključevi vezani za korisnika i uređaj se
+    //dobijaju od frontenda)
     public function definition()
     {
-
         return [
-            //preko funkcije dobija device_id i timestamp
+            //preko funkcije se dobija device_id i timestamp
             'device_id' => fn(array $attributes) => $attributes['device_id'],
             'timestamp' => fn(array $attributes) => $attributes['timestamp'],
             //ovo su delovi koje generiše(podaci sa uređaja koji su prikupljeni)
