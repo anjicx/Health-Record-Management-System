@@ -1,12 +1,12 @@
 
-HEALTH DATA MANAGEMENT SYSTEM
+# HEALTH DATA MANAGEMENT SYSTEM
 
-OVERVIEW:
+# OVERVIEW:
 
 The Health Data Management System is a web-based application designed to help users track and manage their health data. It allows users to register, synchronize health metrics from wearable devices, and generate reports.
 The system is built using Laravel for the backend and React.js for the frontend.
 
-FEATURES:
+# FEATURES:
 
 1. User Authentication: Registration, login, password recovery via email
 
@@ -21,7 +21,7 @@ FEATURES:
 7. 3D Visualization: Integrated Blender model
    
 
-TECHNOLOGIES USED:
+# TECHNOLOGIES USED:
 
 Backend: Laravel
 
@@ -32,12 +32,12 @@ Database: MySQL
 3D Data Visualization: Integrated Blender model with beating animation for health data visualization
 
 
-INSTALLATION:
+# INSTALLATION:
 
 Prerequisites
 
-~ PHP 8.x
+ PHP 8.x
 
-~ Node.js & npm
+ Node.js & npm
 
-~ MySQL database server
+ MySQL database server
