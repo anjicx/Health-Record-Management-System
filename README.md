@@ -1,5 +1,6 @@
 
-# HEALTH DATA MANAGEMENT SYSTEM
+# Full-Stack Health Record Management System
+
 
 # OVERVIEW:
 
